@@ -50,7 +50,7 @@ public class HouseServiceImpl implements HouseService {
 
         House house = houseRepository
                 .findByAccessCode(request.accessCode())
-                .orElseThrow(() -> new HouseNotFoundException());
+                .orElseThrow(() -> new HouseNotFoundException(request.accessCode()));
 
         return houseMapper.toValidateResponse(house);
     }

@@ -57,4 +57,21 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(ShoppingItemNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleShoppingItemNotFound(
+                ShoppingItemNotFoundException ex,
+                HttpServletRequest request) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                null,
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
 }
