@@ -1,6 +1,7 @@
 package com.daniel.market_app.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ErrorResponse(
 
@@ -8,6 +9,7 @@ public record ErrorResponse(
         int status,
         String error,
         String message,
+        List<String> details,
         String path
 
 ) {

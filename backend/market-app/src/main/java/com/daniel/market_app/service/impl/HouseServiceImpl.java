@@ -13,17 +13,20 @@ import com.daniel.market_app.repository.HouseRepository;
 import com.daniel.market_app.service.HouseService;
 import com.daniel.market_app.utils.AccessCodeGenerator;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HouseServiceImpl implements HouseService {
 
     private final HouseRepository houseRepository;
     private final HouseMapper houseMapper;
     private final AccessCodeGenerator accessCodeGenerator;
 
-   @Override
+    @Override
+    @Transactional
     public CreateHouseResponse createHouse(CreateHouseRequest request) {
 
         String accessCode;
@@ -42,12 +45,12 @@ public class HouseServiceImpl implements HouseService {
         return houseMapper.toCreateResponse(savedHouse);
     }
 
-   @Override
+    @Override
     public ValidateHouseResponse validateAccessCode(ValidateHouseRequest request) {
 
         House house = houseRepository
-            .findByAccessCode(request.accessCode())
-            .orElseThrow(() -> new HouseNotFoundException(request.accessCode()));   
+                .findByAccessCode(request.accessCode())
+                .orElseThrow(() -> new HouseNotFoundException());
 
         return houseMapper.toValidateResponse(house);
     }
