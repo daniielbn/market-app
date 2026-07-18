@@ -6,9 +6,11 @@
 
 # 📖 Introducción
 
-La base de datos ha sido diseñada pensando en la simplicidad del MVP, pero permitiendo la incorporación de nuevas funcionalidades sin necesidad de modificar profundamente la estructura.
+La base de datos ha sido diseñada siguiendo el principio **KISS (Keep It Simple, Stupid)**, priorizando la simplicidad para el MVP sin perder la capacidad de evolucionar en futuras versiones.
 
-Aunque la primera versión será muy sencilla, el modelo permitirá evolucionar hacia una aplicación multiusuario.
+En esta primera versión, cada vivienda dispondrá de una única lista de la compra, por lo que no es necesario introducir una entidad intermedia para representar las listas.
+
+Este enfoque reduce la complejidad del modelo de datos y simplifica tanto el backend como el frontend.
 
 ---
 
@@ -17,9 +19,9 @@ Aunque la primera versión será muy sencilla, el modelo permitirá evolucionar 
 El modelo de datos debe permitir:
 
 - Gestionar múltiples viviendas.
-- Asociar una o varias listas a cada vivienda.
-- Gestionar productos dentro de cada lista.
-- Escalar fácilmente hacia un sistema de usuarios.
+- Asociar productos a una vivienda.
+- Marcar productos como comprados.
+- Escalar fácilmente hacia nuevas funcionalidades.
 
 ---
 
@@ -32,13 +34,7 @@ House
  │
  └─────────────── N
                  │
-          ShoppingList
-                 │
-                 │ 1
-                 │
-                 └────────────── N
-                                │
-                         ShoppingItem
+          ShoppingItem
 ```
 
 ---
@@ -49,7 +45,7 @@ House
 
 Representa una vivienda.
 
-Cada vivienda posee un código único que será utilizado para acceder desde nuevos dispositivos.
+Cada vivienda posee un código único que permitirá a nuevos dispositivos unirse a ella.
 
 ### Campos
 
@@ -57,25 +53,7 @@ Cada vivienda posee un código único que será utilizado para acceder desde nue
 |--------|------|-------------|
 | id | UUID | Identificador único |
 | name | String | Nombre de la vivienda |
-| accessCode | String | PIN o código de acceso |
-| createdAt | Timestamp | Fecha de creación |
-| updatedAt | Timestamp | Última modificación |
-
----
-
-## 📝 ShoppingList
-
-Representa una lista de compra.
-
-Aunque inicialmente existirá una única lista por vivienda, se ha separado como entidad independiente para permitir varias listas en futuras versiones.
-
-### Campos
-
-| Campo | Tipo | Descripción |
-|--------|------|-------------|
-| id | UUID | Identificador |
-| houseId | UUID | Vivienda propietaria |
-| name | String | Nombre de la lista |
+| accessCode | String | Código de acceso único |
 | createdAt | Timestamp | Fecha de creación |
 | updatedAt | Timestamp | Última modificación |
 
@@ -83,61 +61,49 @@ Aunque inicialmente existirá una única lista por vivienda, se ha separado como
 
 ## 🛒 ShoppingItem
 
-Representa un producto de la lista.
+Representa un producto pendiente o comprado dentro de una vivienda.
 
 ### Campos
 
 | Campo | Tipo | Descripción |
 |--------|------|-------------|
-| id | UUID | Identificador |
-| shoppingListId | UUID | Lista propietaria |
+| id | UUID | Identificador único |
+| houseId | UUID | Vivienda propietaria |
 | name | String | Nombre del producto |
 | purchased | Boolean | Estado del producto |
 | createdAt | Timestamp | Fecha de creación |
 | updatedAt | Timestamp | Última modificación |
+| deletedAt | Timestamp | Fecha de eliminación lógica (Soft Delete) |
 
 ---
 
 # 🔗 Relaciones
 
-## House → ShoppingList
+## House → ShoppingItem
 
-- Una vivienda puede tener varias listas.
-- Cada lista pertenece únicamente a una vivienda.
-
-Relación:
+- Una vivienda puede contener múltiples productos.
+- Cada producto pertenece únicamente a una vivienda.
 
 ```text
-House (1) -------- (N) ShoppingList
-```
-
----
-
-## ShoppingList → ShoppingItem
-
-- Una lista contiene múltiples productos.
-- Cada producto pertenece a una única lista.
-
-```text
-ShoppingList (1) -------- (N) ShoppingItem
+House (1) -------- (N) ShoppingItem
 ```
 
 ---
 
 # 🔑 Claves primarias
 
-Todas las entidades utilizarán:
+Todas las entidades utilizarán claves primarias de tipo:
 
 ```text
 UUID
 ```
 
-Motivos:
+### Motivos
 
 - No exponen el número real de registros.
 - Facilitan futuras integraciones.
-- Evitan problemas al sincronizar datos.
-- Son la opción habitual en aplicaciones modernas.
+- Son ideales para aplicaciones distribuidas.
+- Son el estándar en muchas aplicaciones modernas.
 
 ---
 
@@ -147,103 +113,137 @@ Motivos:
 
 - El nombre será obligatorio.
 - El código de acceso será obligatorio.
-- El código deberá ser único.
-
----
-
-## ShoppingList
-
-- El nombre será obligatorio.
-- Toda lista deberá pertenecer a una vivienda.
+- El código de acceso deberá ser único.
 
 ---
 
 ## ShoppingItem
 
 - El nombre será obligatorio.
-- El estado comprado tendrá como valor inicial `false`.
-- Todo producto deberá pertenecer a una lista.
+- Todo producto deberá pertenecer a una vivienda.
+- El estado inicial será siempre `false` (pendiente).
+- Los productos eliminados utilizarán eliminación lógica (`deletedAt`).
+
+---
+
+# 🧹 Eliminación lógica (Soft Delete)
+
+En lugar de eliminar físicamente un producto de la base de datos, se marcará mediante el campo:
+
+```text
+deletedAt
+```
+
+Esto permitirá en futuras versiones:
+
+- Recuperar productos eliminados.
+- Implementar historial.
+- Obtener estadísticas.
+- Auditar cambios.
+
+Las consultas normales ignorarán automáticamente aquellos registros cuyo `deletedAt` no sea nulo.
 
 ---
 
 # 📈 Escalabilidad
 
-El modelo permite añadir fácilmente:
+El modelo ha sido diseñado para facilitar la incorporación de nuevas funcionalidades sin modificar las entidades existentes.
 
-- Usuarios.
-- Miembros de la vivienda.
-- Varias listas.
+Entre ellas:
+
+- Sistema de usuarios.
+- Miembros de una vivienda.
+- Varias listas de compra.
 - Categorías.
 - Historial.
 - Favoritos.
 - Notificaciones.
 
-Sin modificar las entidades actuales.
-
 ---
 
-# 🚀 Futuras entidades
+# 🚀 Evolución futura
 
-No formarán parte del MVP, pero el diseño contempla su incorporación.
-
-## User
+Cuando la aplicación permita gestionar varias listas por vivienda, se añadirá una nueva entidad:
 
 ```text
-id
-name
-email
-password
+ShoppingList
 ```
 
----
-
-## HouseMember
+quedando el modelo de la siguiente manera:
 
 ```text
-houseId
-userId
-role
-joinedAt
+House
+ │
+ └── ShoppingList
+         │
+         └── ShoppingItem
 ```
 
----
-
-## Category
-
-```text
-id
-name
-icon
-color
-```
-
----
-
-## ShoppingHistory
-
-```text
-id
-shoppingItemId
-purchasedAt
-purchasedBy
-```
+Los productos existentes podrán migrarse automáticamente a una lista denominada **"Lista principal"**, sin afectar a los usuarios.
 
 ---
 
 # 📋 Convenciones
 
-Todas las tablas compartirán las siguientes características:
+Todas las tablas seguirán las siguientes normas:
 
 - Clave primaria UUID.
-- Campos `createdAt`.
-- Campos `updatedAt`.
-- Nombres en singular.
+- Campos `createdAt` y `updatedAt`.
+- Nombres de entidades en singular.
 - Relaciones mediante claves foráneas.
+- Eliminación lógica cuando sea necesario.
+
+---
+
+# 🗃️ Esquema de la base de datos
+
+```text
+House
+│
+├── id
+├── name
+├── accessCode
+├── createdAt
+└── updatedAt
+
+        │
+        │ 1
+        │
+        ▼
+
+ShoppingItem
+├── id
+├── houseId
+├── name
+├── purchased
+├── createdAt
+├── updatedAt
+└── deletedAt
+```
+
+---
+
+# 📌 Decisiones de diseño
+
+Durante la fase de análisis se decidió no incorporar una entidad `ShoppingList` en el MVP.
+
+Aunque inicialmente estaba contemplada, se concluyó que añadiría una complejidad innecesaria para una aplicación donde cada vivienda únicamente dispone de una lista de la compra.
+
+Esta decisión aporta varias ventajas:
+
+- Modelo de datos más sencillo.
+- Menor número de relaciones.
+- Consultas SQL más simples.
+- API REST más limpia.
+- Backend menos complejo.
+- Frontend más fácil de mantener.
+
+La arquitectura sigue preparada para incorporar múltiples listas en futuras versiones mediante una migración de base de datos.
 
 ---
 
 # 🏁 Conclusión
 
-El modelo propuesto prioriza la simplicidad para el MVP sin renunciar a la escalabilidad.
+El modelo de datos prioriza la simplicidad, el rendimiento y la mantenibilidad.
 
-La separación entre viviendas, listas y productos permitirá ampliar la aplicación en futuras versiones sin realizar cambios estructurales importantes en la base de datos.
+Se ha diseñado un esquema mínimo que cubre todas las necesidades del MVP y que, al mismo tiempo, permite evolucionar hacia una aplicación mucho más completa sin requerir cambios drásticos en la arquitectura.

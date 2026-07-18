@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: market-app
+
+  profiles:
+    active: dev
