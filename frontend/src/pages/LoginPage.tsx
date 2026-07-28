@@ -23,6 +23,8 @@ export default function LoginPage() {
 
     async function handleLogin() {
 
+        console.log("Intentando entrar...");
+
         const house = await validateHouse({
             accessCode
         });
