@@ -6,6 +6,8 @@ public record ShoppingItemResponse(
 
         UUID id,
 
+        ProductItemResponse product,
+
         Integer quantity,
 
         boolean purchased,

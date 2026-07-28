@@ -3,6 +3,7 @@ package com.daniel.market_app.service.impl;
 import com.daniel.market_app.domain.House;
 import com.daniel.market_app.domain.Product;
 import com.daniel.market_app.dto.request.CreateProductRequest;
+import com.daniel.market_app.dto.response.ProductItemResponse;
 import com.daniel.market_app.dto.response.ProductResponse;
 import com.daniel.market_app.exception.HouseNotFoundException;
 import com.daniel.market_app.exception.ProductNotFoundException;
@@ -53,13 +54,16 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<ProductResponse> findAllByHouseId(UUID houseId) {
+	public List<ProductItemResponse> findAllByHouseId(UUID houseId) {
 
 		getHouse(houseId);
 
 		return productRepository.findAllByHouseId(houseId)
 				.stream()
-				.map(this::toResponse)
+				.map(product -> new ProductItemResponse(
+						product.getId(),
+						product.getName()
+				))
 				.toList();
 	}
 
