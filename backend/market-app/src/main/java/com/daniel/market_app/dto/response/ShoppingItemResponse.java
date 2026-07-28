@@ -10,7 +10,11 @@ public record ShoppingItemResponse(
 
         Integer quantity,
 
-        boolean purchased
+        boolean purchased,
+
+        String comment,
+
+        String productType
 
 ) {
 }

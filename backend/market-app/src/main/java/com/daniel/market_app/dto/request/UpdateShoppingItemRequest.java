@@ -11,7 +11,9 @@ public record UpdateShoppingItemRequest(
         @Min(1)
         Integer quantity,
 
-        Boolean purchased
+        Boolean purchased,
+
+        String comment
 
 ) {
 }

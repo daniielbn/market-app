@@ -37,14 +37,24 @@ public class ShoppingItem extends BaseEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "comment", length = 500)
+    private String comment;
+
+    @Column(name = "product_type", length = 100)
+    private String productType;
+
     public ShoppingItem(House house,
                         String name,
-                        Integer quantity) {
+                        Integer quantity,
+                        String comment,
+                        String productType) {
 
         this.house = house;
         this.name = name;
         this.quantity = quantity;
         this.purchased = false;
+        this.comment = comment;
+        this.productType = productType;
     }
 
 }

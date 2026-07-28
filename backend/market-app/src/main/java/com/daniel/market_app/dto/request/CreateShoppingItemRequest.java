@@ -11,7 +11,11 @@ public record CreateShoppingItemRequest(
         String name,
 
         @Min(1)
-        Integer quantity
+        Integer quantity,
+
+        String comment,
+
+        String productType
 
 ) {
 }

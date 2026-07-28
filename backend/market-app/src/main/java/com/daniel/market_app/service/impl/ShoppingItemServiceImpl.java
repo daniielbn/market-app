@@ -52,7 +52,9 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
         ShoppingItem shoppingItem = new ShoppingItem(
                 house,
                 request.name(),
-                request.quantity()
+                request.quantity(),
+                request.comment(),
+                request.productType()
         );
 
         ShoppingItem savedShoppingItem =
@@ -81,6 +83,11 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
             shoppingItem.setPurchased(request.purchased());
         }
 
+        if (request.comment() != null) {
+            shoppingItem.setComment(request.comment());
+        }
+        
+
         return shoppingItemMapper.toResponse(shoppingItem);
     }
 
@@ -101,6 +108,14 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
     private ShoppingItem getShoppingItem(UUID shoppingItemId) {
         return shoppingItemRepository.findByIdAndDeletedAtIsNull(shoppingItemId)
                 .orElseThrow(() -> new ShoppingItemNotFoundException(shoppingItemId));
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByHouseId(UUID houseId) {
+
+        shoppingItemRepository.deleteAllByHouseId(houseId);
+
     }
 
 }

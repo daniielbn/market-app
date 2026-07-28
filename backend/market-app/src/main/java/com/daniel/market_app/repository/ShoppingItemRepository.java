@@ -17,4 +17,6 @@ public interface ShoppingItemRepository extends JpaRepository<ShoppingItem, UUID
 
     Optional<ShoppingItem> findByIdAndHouseIdAndDeletedAtIsNull(UUID id, UUID houseId);
 
+    void deleteAllByHouseId(UUID houseId);
+
 }

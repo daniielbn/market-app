@@ -19,4 +19,6 @@ public interface ShoppingItemService {
 
     void deleteShoppingItem(UUID shoppingItemId);
 
+    void deleteAllByHouseId(UUID houseId);
+
 }

@@ -52,4 +52,14 @@ public class ShoppingItemController {
         shoppingItemService.deleteShoppingItem(shoppingItemId);
     }
 
+    @DeleteMapping("/houses/{houseId}/shopping-items")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllByHouseId(
+            @PathVariable UUID houseId
+    ) {
+
+        shoppingItemService.deleteAllByHouseId(houseId);
+
+    }
+
 }
