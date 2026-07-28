@@ -6,15 +6,11 @@ public record ShoppingItemResponse(
 
         UUID id,
 
-        String name,
-
         Integer quantity,
 
         boolean purchased,
 
-        String comment,
-
-        String productType
+        String comment
 
 ) {
 }

@@ -1,7 +1,12 @@
 package com.daniel.market_app.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +25,13 @@ public class House extends BaseEntity {
 
     @Column(name = "access_code", nullable = false, unique = true, length = 20)
     private String accessCode;
+
+    @OneToMany(
+        mappedBy = "house",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Product> products = new ArrayList<>();
 
     public House(String name, String accessCode) {
         this.name = name;

@@ -5,14 +5,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.daniel.market_app.domain.House;
+import com.daniel.market_app.domain.Product;
 import com.daniel.market_app.domain.ShoppingItem;
 import com.daniel.market_app.dto.request.CreateShoppingItemRequest;
 import com.daniel.market_app.dto.request.UpdateShoppingItemRequest;
 import com.daniel.market_app.dto.response.ShoppingItemResponse;
 import com.daniel.market_app.exception.HouseNotFoundException;
+import com.daniel.market_app.exception.ProductNotFoundException;
 import com.daniel.market_app.exception.ShoppingItemNotFoundException;
 import com.daniel.market_app.mapper.ShoppingItemMapper;
 import com.daniel.market_app.repository.HouseRepository;
+import com.daniel.market_app.repository.ProductRepository;
 import com.daniel.market_app.repository.ShoppingItemRepository;
 import com.daniel.market_app.service.ShoppingItemService;
 
@@ -27,6 +30,7 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
 
     private final ShoppingItemRepository shoppingItemRepository;
     private final HouseRepository houseRepository;
+    private final ProductRepository productRepository;
     private final ShoppingItemMapper shoppingItemMapper;
 
     @Override
@@ -48,14 +52,14 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
             CreateShoppingItemRequest request) {
 
         House house = getHouse(houseId);
+        Product product = getProduct(houseId, request.productId());
 
-        ShoppingItem shoppingItem = new ShoppingItem(
-                house,
-                request.name(),
-                request.quantity(),
-                request.comment(),
-                request.productType()
-        );
+        ShoppingItem shoppingItem = new ShoppingItem();
+        shoppingItem.setHouse(house);
+        shoppingItem.setProduct(product);
+        shoppingItem.setQuantity(request.quantity());
+        shoppingItem.setComment(request.comment());
+        shoppingItem.setPurchased(false);
 
         ShoppingItem savedShoppingItem =
                 shoppingItemRepository.save(shoppingItem);
@@ -70,10 +74,6 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
             UpdateShoppingItemRequest request) {
 
         ShoppingItem shoppingItem = getShoppingItem(shoppingItemId);
-
-        if (request.name() != null) {
-            shoppingItem.setName(request.name());
-        }
 
         if (request.quantity() != null) {
             shoppingItem.setQuantity(request.quantity());
@@ -108,6 +108,11 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
     private ShoppingItem getShoppingItem(UUID shoppingItemId) {
         return shoppingItemRepository.findByIdAndDeletedAtIsNull(shoppingItemId)
                 .orElseThrow(() -> new ShoppingItemNotFoundException(shoppingItemId));
+    }
+
+    private Product getProduct(UUID houseId, UUID productId) {
+        return productRepository.findByIdAndHouseId(productId, houseId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
     @Override

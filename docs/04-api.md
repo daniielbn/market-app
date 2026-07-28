@@ -63,6 +63,12 @@ Una vez validado, el backend devolverá el identificador (`houseId`) de la vivie
 
 El frontend almacenará dicho identificador localmente para utilizarlo en las siguientes peticiones.
 
+## Formato por recurso
+
+- Viviendas y shopping items: `application/json`
+- Creación de productos: `multipart/form-data`
+- Descarga de imagen de producto: `application/octet-stream`
+
 ---
 
 # 🏠 House API
@@ -126,37 +132,16 @@ POST /api/v1/houses/validate
 
 ---
 
-## Obtener información de una vivienda
+## Shopping Item API
+
+---
+
+## Obtener todos los shopping items de una vivienda
 
 ### Request
 
 ```http
-GET /api/v1/houses/{houseId}
-```
-
-### Response
-
-```json
-{
-    "id": "9d4f27d1-65ef-4dd0-9eb8-26dc2b903de0",
-    "name": "Casa Dani"
-}
-```
-
----
-
-# 🛒 Shopping Item API
-
----
-
-## Obtener todos los productos
-
-Devuelve todos los productos pertenecientes a una vivienda.
-
-### Request
-
-```http
-GET /api/v1/houses/{houseId}/items
+GET /api/v1/houses/{houseId}/shopping-items
 ```
 
 ### Response
@@ -165,13 +150,158 @@ GET /api/v1/houses/{houseId}/items
 [
     {
         "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
-        "name": "Leche",
-        "purchased": false
-    },
+        "quantity": 2,
+        "purchased": false,
+        "comment": "Para desayunos"
+    }
+]
+```
+
+---
+
+## Crear un shopping item
+
+### Request
+
+```http
+POST /api/v1/houses/{houseId}/shopping-items
+```
+
+### Body
+
+```json
+{
+    "productId": "0f7c0f1f-3f6f-4c9f-9b63-7cddff9e43b7",
+    "quantity": 2,
+    "comment": "Para el desayuno"
+}
+```
+
+### Response
+
+```json
+{
+    "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
+    "quantity": 2,
+    "purchased": false,
+    "comment": "Para el desayuno"
+}
+```
+
+---
+
+## Actualizar un shopping item
+
+### Request
+
+```http
+PATCH /api/v1/shopping-items/{shoppingItemId}
+```
+
+### Body
+
+```json
+{
+    "quantity": 3,
+    "purchased": true,
+    "comment": "Ya comprado"
+}
+```
+
+### Response
+
+```json
+{
+    "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
+    "quantity": 3,
+    "purchased": true,
+    "comment": "Ya comprado"
+}
+```
+
+---
+
+## Eliminar un shopping item
+
+### Request
+
+```http
+DELETE /api/v1/shopping-items/{shoppingItemId}
+```
+
+### Response
+
+```http
+204 No Content
+```
+
+---
+
+## Eliminar todos los shopping items de una vivienda
+
+### Request
+
+```http
+DELETE /api/v1/houses/{houseId}/shopping-items
+```
+
+### Response
+
+```http
+204 No Content
+```
+
+---
+
+# 🛍️ Product API
+
+---
+
+## Crear un producto
+
+La subida de imagen se hace con `multipart/form-data`.
+
+### Request
+
+```http
+POST /api/v1/houses/{houseId}/products
+```
+
+### Form fields
+
+```text
+name=Leche
+image=<multipart file>
+```
+
+### Response
+
+```json
+{
+    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+    "name": "Leche",
+    "image": "<base64-image-data>"
+}
+```
+
+---
+
+## Obtener todos los productos de una vivienda
+
+### Request
+
+```http
+GET /api/v1/houses/{houseId}/products
+```
+
+### Response
+
+```json
+[
     {
-        "id": "2bb5411c-0c62-4703-a7d3-d9f5882d43a5",
-        "name": "Pan",
-        "purchased": true
+        "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+        "name": "Leche",
+        "image": "<base64-image-data>"
     }
 ]
 ```
@@ -183,105 +313,44 @@ GET /api/v1/houses/{houseId}/items
 ### Request
 
 ```http
-GET /api/v1/houses/{houseId}/items/{itemId}
-```
-
----
-
-## Añadir producto
-
-### Request
-
-```http
-POST /api/v1/houses/{houseId}/items
-```
-
-### Body
-
-```json
-{
-    "name": "Café"
-}
+GET /api/v1/houses/{houseId}/products/{productId}
 ```
 
 ### Response
 
 ```json
 {
-    "id": "2bb5411c-0c62-4703-a7d3-d9f5882d43a5",
-    "name": "Café",
-    "purchased": false
+    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+    "name": "Leche",
+    "image": "<base64-image-data>"
 }
 ```
 
 ---
 
-## Modificar un producto
-
-Permite modificar el nombre del producto.
+## Obtener la imagen de un producto
 
 ### Request
 
 ```http
-PUT /api/v1/houses/{houseId}/items/{itemId}
+GET /api/v1/houses/{houseId}/products/{productId}/image
 ```
 
-### Body
-
-```json
-{
-    "name": "Café molido"
-}
-```
-
----
-
-## Cambiar estado del producto
-
-Permite marcar o desmarcar un producto como comprado.
-
-### Request
+### Response
 
 ```http
-PATCH /api/v1/houses/{houseId}/items/{itemId}/purchase
-```
-
-### Body
-
-```json
-{
-    "purchased": true
-}
+200 OK
+Content-Type: application/octet-stream
 ```
 
 ---
 
 ## Eliminar un producto
 
-Realiza una eliminación lógica del producto.
-
 ### Request
 
 ```http
-DELETE /api/v1/houses/{houseId}/items/{itemId}
-```
-
-### Response
-
-```http
-204 No Content
-```
-
----
-
-## Eliminar todos los productos comprados
-
-Elimina lógicamente todos los productos marcados como comprados.
-
-### Request
-
-```http
-DELETE /api/v1/houses/{houseId}/items/purchased
+DELETE /api/v1/houses/{houseId}/products/{productId}
 ```
 
 ### Response
@@ -337,11 +406,34 @@ DELETE /api/v1/houses/{houseId}/items/purchased
 
 ---
 
+## CreateProductRequest
+
+```text
+name=Leche
+image=<multipart file>
+```
+
+---
+
+## ProductResponse
+
+```json
+{
+    "id": "uuid",
+    "name": "Leche",
+    "image": "<base64-image-data>"
+}
+```
+
+---
+
 ## CreateShoppingItemRequest
 
 ```json
 {
-    "name": "Leche"
+    "productId": "uuid",
+    "quantity": 2,
+    "comment": "Opcional"
 }
 ```
 
@@ -351,17 +443,22 @@ DELETE /api/v1/houses/{houseId}/items/purchased
 
 ```json
 {
-    "name": "Leche semidesnatada"
+    "quantity": 3,
+    "purchased": true,
+    "comment": "Opcional"
 }
 ```
 
 ---
 
-## PurchaseShoppingItemRequest
+## ShoppingItemResponse
 
 ```json
 {
-    "purchased": true
+    "id": "uuid",
+    "quantity": 2,
+    "purchased": false,
+    "comment": "Opcional"
 }
 ```
 
@@ -377,7 +474,7 @@ Todas las respuestas de error seguirán un formato común.
     "status": 404,
     "error": "Not Found",
     "message": "Shopping item not found.",
-    "path": "/api/v1/houses/{houseId}/items/{itemId}"
+    "path": "/api/v1/houses/{houseId}/shopping-items/{shoppingItemId}"
 }
 ```
 
@@ -428,4 +525,4 @@ Manteniendo la compatibilidad con la versión actual.
 
 La API ha sido diseñada siguiendo principios REST, priorizando la simplicidad para el MVP y permitiendo evolucionar fácilmente hacia una aplicación más completa.
 
-La estructura basada en viviendas y productos refleja fielmente el modelo de datos definido y facilita el desarrollo tanto del backend como del frontend.
+La estructura basada en viviendas, productos y shopping items refleja fielmente el modelo de datos definido y facilita el desarrollo tanto del backend como del frontend.

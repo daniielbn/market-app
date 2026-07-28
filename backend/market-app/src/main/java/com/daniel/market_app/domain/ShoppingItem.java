@@ -1,6 +1,5 @@
 package com.daniel.market_app.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
 @Table(name = "shopping_items")
 public class ShoppingItem extends BaseEntity {
@@ -25,8 +24,9 @@ public class ShoppingItem extends BaseEntity {
     @JoinColumn(name = "house_id", nullable = false)
     private House house;
 
-    @Column(nullable = false, length = 150)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -40,21 +40,15 @@ public class ShoppingItem extends BaseEntity {
     @Column(name = "comment", length = 500)
     private String comment;
 
-    @Column(name = "product_type", length = 100)
-    private String productType;
-
     public ShoppingItem(House house,
-                        String name,
                         Integer quantity,
-                        String comment,
-                        String productType) {
+                        String comment
+                        ) {
 
         this.house = house;
-        this.name = name;
         this.quantity = quantity;
         this.purchased = false;
         this.comment = comment;
-        this.productType = productType;
     }
 
 }
