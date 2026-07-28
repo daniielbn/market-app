@@ -1,25 +1,29 @@
 # 🌐 Diseño de la API REST
 
-> Documento que define la API REST de la aplicación, incluyendo los recursos, endpoints, métodos HTTP y formato de intercambio de datos.
+> Documento que define la API REST real de la aplicación, con todos los endpoints implementados y los cuerpos que se envían y reciben.
 
 ---
 
 # 📖 Introducción
 
-La comunicación entre el frontend y el backend se realizará mediante una API REST siguiendo buenas prácticas de diseño.
+La comunicación entre frontend y backend se realiza mediante una API REST versionada en la URL.
 
-Todos los datos se intercambiarán en formato **JSON** y la API estará versionada para facilitar futuras evoluciones sin romper la compatibilidad.
+La API actual expone endpoints para:
+
+- Crear y validar viviendas.
+- Gestionar productos de una vivienda.
+- Gestionar shopping items asociados a productos.
 
 ---
 
 # 🎯 Objetivos
 
-La API deberá permitir:
+La API permite:
 
-- Gestionar viviendas.
-- Validar el acceso a una vivienda.
-- Gestionar los productos de una vivienda.
-- Mantener una estructura sencilla, intuitiva y escalable.
+- Crear una vivienda y generar su código de acceso.
+- Validar el acceso a una vivienda mediante `accessCode`.
+- Crear, consultar y eliminar productos.
+- Crear, consultar, actualizar y eliminar shopping items.
 
 ---
 
@@ -31,59 +35,29 @@ La API deberá permitir:
 /api/v1
 ```
 
----
-
 ## Formato de datos
-
-Todas las peticiones y respuestas utilizarán:
-
-```http
-Content-Type: application/json
-```
-
----
-
-## Versionado
-
-La API utilizará versionado mediante la URL.
-
-Ejemplo:
-
-```text
-/api/v1/...
-```
-
----
-
-## Identificación de la vivienda
-
-La primera vez que el usuario abra la aplicación deberá introducir el código de acceso de su vivienda.
-
-Una vez validado, el backend devolverá el identificador (`houseId`) de la vivienda.
-
-El frontend almacenará dicho identificador localmente para utilizarlo en las siguientes peticiones.
-
-## Formato por recurso
 
 - Viviendas y shopping items: `application/json`
 - Creación de productos: `multipart/form-data`
-- Descarga de imagen de producto: `application/octet-stream`
+- Imagen de producto: `application/octet-stream`
+
+## Identificación de la vivienda
+
+La primera vez que el usuario entra en la aplicación introduce el `accessCode` de su vivienda.
+
+Si el código es válido, el backend devuelve el `houseId` y el frontend lo reutiliza en peticiones posteriores.
 
 ---
 
 # 🏠 House API
 
----
-
-## Crear una vivienda
-
-### Request
+## 1. Crear una vivienda
 
 ```http
 POST /api/v1/houses
 ```
 
-### Body
+### Request body
 
 ```json
 {
@@ -91,7 +65,7 @@ POST /api/v1/houses
 }
 ```
 
-### Response
+### Response body
 
 ```json
 {
@@ -101,19 +75,20 @@ POST /api/v1/houses
 }
 ```
 
+### Status codes
+
+- `201 Created`
+- `400 Bad Request`
+
 ---
 
-## Validar código de acceso
-
-Permite comprobar si el código introducido es válido.
-
-### Request
+## 2. Validar código de acceso
 
 ```http
 POST /api/v1/houses/validate
 ```
 
-### Body
+### Request body
 
 ```json
 {
@@ -121,7 +96,7 @@ POST /api/v1/houses/validate
 }
 ```
 
-### Response
+### Response body
 
 ```json
 {
@@ -130,21 +105,182 @@ POST /api/v1/houses/validate
 }
 ```
 
+### Status codes
+
+- `200 OK`
+- `400 Bad Request`
+- `404 Not Found`
+
 ---
 
-## Shopping Item API
+# 🛍️ Product API
+
+## 3. Crear un producto
+
+```http
+POST /api/v1/houses/{houseId}/products
+```
+
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+
+### Content type
+
+```text
+multipart/form-data
+```
+
+### Form fields
+
+```text
+name=Leche
+image=<multipart file>
+```
+
+### Response body
+
+```json
+{
+    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+    "name": "Leche",
+    "image": "<base64-image-data>"
+}
+```
+
+### Status codes
+
+- `201 Created`
+- `400 Bad Request`
+- `404 Not Found`
 
 ---
 
-## Obtener todos los shopping items de una vivienda
+## 4. Obtener todos los productos de una vivienda
 
-### Request
+```http
+GET /api/v1/houses/{houseId}/products
+```
+
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+
+### Response body
+
+```json
+[
+    {
+        "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+        "name": "Leche",
+        "image": "<base64-image-data>"
+    }
+]
+```
+
+### Status codes
+
+- `200 OK`
+- `404 Not Found`
+
+---
+
+## 5. Obtener un producto
+
+```http
+GET /api/v1/houses/{houseId}/products/{productId}
+```
+
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+- `productId`: identificador del producto.
+
+### Response body
+
+```json
+{
+    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+    "name": "Leche",
+    "image": "<base64-image-data>"
+}
+```
+
+### Status codes
+
+- `200 OK`
+- `404 Not Found`
+
+---
+
+## 6. Obtener la imagen de un producto
+
+```http
+GET /api/v1/houses/{houseId}/products/{productId}/image
+```
+
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+- `productId`: identificador del producto.
+
+### Response
+
+```http
+200 OK
+Content-Type: application/octet-stream
+```
+
+### Body
+
+Bytes de la imagen almacenada en la base de datos.
+
+### Status codes
+
+- `200 OK`
+- `404 Not Found`
+
+---
+
+## 7. Eliminar un producto
+
+```http
+DELETE /api/v1/houses/{houseId}/products/{productId}
+```
+
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+- `productId`: identificador del producto.
+
+### Request body
+
+No aplica.
+
+### Response body
+
+No aplica.
+
+### Status codes
+
+- `204 No Content`
+- `404 Not Found`
+
+---
+
+# 🛒 Shopping Item API
+
+## 8. Obtener todos los shopping items de una vivienda
 
 ```http
 GET /api/v1/houses/{houseId}/shopping-items
 ```
 
-### Response
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+
+### Response body
 
 ```json
 [
@@ -157,17 +293,29 @@ GET /api/v1/houses/{houseId}/shopping-items
 ]
 ```
 
+### Notas
+
+- Solo devuelve los shopping items no eliminados lógicamente.
+- La respuesta se ordena por fecha de creación ascendente.
+
+### Status codes
+
+- `200 OK`
+- `404 Not Found`
+
 ---
 
-## Crear un shopping item
-
-### Request
+## 9. Crear un shopping item
 
 ```http
 POST /api/v1/houses/{houseId}/shopping-items
 ```
 
-### Body
+### Path parameters
+
+- `houseId`: identificador de la vivienda.
+
+### Request body
 
 ```json
 {
@@ -177,7 +325,7 @@ POST /api/v1/houses/{houseId}/shopping-items
 }
 ```
 
-### Response
+### Response body
 
 ```json
 {
@@ -188,17 +336,25 @@ POST /api/v1/houses/{houseId}/shopping-items
 }
 ```
 
+### Status codes
+
+- `201 Created`
+- `400 Bad Request`
+- `404 Not Found`
+
 ---
 
-## Actualizar un shopping item
-
-### Request
+## 10. Actualizar un shopping item
 
 ```http
 PATCH /api/v1/shopping-items/{shoppingItemId}
 ```
 
-### Body
+### Path parameters
+
+- `shoppingItemId`: identificador del shopping item.
+
+### Request body
 
 ```json
 {
@@ -208,7 +364,7 @@ PATCH /api/v1/shopping-items/{shoppingItemId}
 }
 ```
 
-### Response
+### Response body
 
 ```json
 {
@@ -219,149 +375,70 @@ PATCH /api/v1/shopping-items/{shoppingItemId}
 }
 ```
 
+### Notas
+
+- El endpoint admite actualización parcial.
+- Solo modifica los campos que vengan informados.
+
+### Status codes
+
+- `200 OK`
+- `400 Bad Request`
+- `404 Not Found`
+
 ---
 
-## Eliminar un shopping item
-
-### Request
+## 11. Eliminar un shopping item
 
 ```http
 DELETE /api/v1/shopping-items/{shoppingItemId}
 ```
 
-### Response
+### Path parameters
 
-```http
-204 No Content
-```
+- `shoppingItemId`: identificador del shopping item.
+
+### Request body
+
+No aplica.
+
+### Response body
+
+No aplica.
+
+### Status codes
+
+- `204 No Content`
+- `404 Not Found`
 
 ---
 
-## Eliminar todos los shopping items de una vivienda
-
-### Request
+## 12. Eliminar todos los shopping items de una vivienda
 
 ```http
 DELETE /api/v1/houses/{houseId}/shopping-items
 ```
 
-### Response
+### Path parameters
 
-```http
-204 No Content
-```
+- `houseId`: identificador de la vivienda.
 
----
+### Request body
 
-# 🛍️ Product API
+No aplica.
 
----
+### Response body
 
-## Crear un producto
+No aplica.
 
-La subida de imagen se hace con `multipart/form-data`.
+### Status codes
 
-### Request
-
-```http
-POST /api/v1/houses/{houseId}/products
-```
-
-### Form fields
-
-```text
-name=Leche
-image=<multipart file>
-```
-
-### Response
-
-```json
-{
-    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
-    "name": "Leche",
-    "image": "<base64-image-data>"
-}
-```
+- `204 No Content`
+- `404 Not Found`
 
 ---
 
-## Obtener todos los productos de una vivienda
-
-### Request
-
-```http
-GET /api/v1/houses/{houseId}/products
-```
-
-### Response
-
-```json
-[
-    {
-        "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
-        "name": "Leche",
-        "image": "<base64-image-data>"
-    }
-]
-```
-
----
-
-## Obtener un producto
-
-### Request
-
-```http
-GET /api/v1/houses/{houseId}/products/{productId}
-```
-
-### Response
-
-```json
-{
-    "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
-    "name": "Leche",
-    "image": "<base64-image-data>"
-}
-```
-
----
-
-## Obtener la imagen de un producto
-
-### Request
-
-```http
-GET /api/v1/houses/{houseId}/products/{productId}/image
-```
-
-### Response
-
-```http
-200 OK
-Content-Type: application/octet-stream
-```
-
----
-
-## Eliminar un producto
-
-### Request
-
-```http
-DELETE /api/v1/houses/{houseId}/products/{productId}
-```
-
-### Response
-
-```http
-204 No Content
-```
-
----
-
-# 📦 DTOs
+# 📦 DTOs actuales
 
 ## CreateHouseRequest
 
@@ -370,8 +447,6 @@ DELETE /api/v1/houses/{houseId}/products/{productId}
     "name": "Casa Dani"
 }
 ```
-
----
 
 ## CreateHouseResponse
 
@@ -383,8 +458,6 @@ DELETE /api/v1/houses/{houseId}/products/{productId}
 }
 ```
 
----
-
 ## ValidateHouseRequest
 
 ```json
@@ -392,8 +465,6 @@ DELETE /api/v1/houses/{houseId}/products/{productId}
     "accessCode": "HOME-7F3K"
 }
 ```
-
----
 
 ## ValidateHouseResponse
 
@@ -404,16 +475,12 @@ DELETE /api/v1/houses/{houseId}/products/{productId}
 }
 ```
 
----
-
 ## CreateProductRequest
 
 ```text
 name=Leche
 image=<multipart file>
 ```
-
----
 
 ## ProductResponse
 
@@ -425,8 +492,6 @@ image=<multipart file>
 }
 ```
 
----
-
 ## CreateShoppingItemRequest
 
 ```json
@@ -437,8 +502,6 @@ image=<multipart file>
 }
 ```
 
----
-
 ## UpdateShoppingItemRequest
 
 ```json
@@ -448,8 +511,6 @@ image=<multipart file>
     "comment": "Opcional"
 }
 ```
-
----
 
 ## ShoppingItemResponse
 
@@ -466,7 +527,7 @@ image=<multipart file>
 
 # 🚨 Respuestas de error
 
-Todas las respuestas de error seguirán un formato común.
+El backend devuelve el siguiente formato común para errores:
 
 ```json
 {
@@ -474,7 +535,20 @@ Todas las respuestas de error seguirán un formato común.
     "status": 404,
     "error": "Not Found",
     "message": "Shopping item not found.",
+    "details": null,
     "path": "/api/v1/houses/{houseId}/shopping-items/{shoppingItemId}"
+}
+```
+
+### Validaciones
+
+Cuando falla una validación, `details` contiene la lista de errores de campo:
+
+```json
+{
+    "details": [
+        "name: must not be blank"
+    ]
 }
 ```
 
@@ -489,40 +563,20 @@ Todas las respuestas de error seguirán un formato común.
 | 204 | No Content |
 | 400 | Bad Request |
 | 404 | Not Found |
-| 409 | Conflict |
 | 500 | Internal Server Error |
 
 ---
 
 # 🔒 Seguridad
 
-La primera versión de la aplicación no dispondrá de autenticación mediante usuarios.
+La aplicación no usa autenticación de usuarios todavía.
 
-El acceso a una vivienda se realizará utilizando un código único (`accessCode`).
-
-Una vez validado, el frontend almacenará el identificador (`houseId`) para acceder a los recursos asociados a dicha vivienda.
-
-En futuras versiones, este mecanismo podrá sustituirse por autenticación basada en JWT sin modificar la estructura general de la API.
-
----
-
-# 📈 Evolución futura
-
-La API está preparada para incorporar nuevos recursos como:
-
-- Usuarios.
-- Miembros de una vivienda.
-- Categorías.
-- Historial de compras.
-- Notificaciones.
-- Favoritos.
-
-Manteniendo la compatibilidad con la versión actual.
+El acceso a una vivienda se realiza mediante `accessCode`, y el frontend guarda el `houseId` recibido después de validarlo.
 
 ---
 
 # 🏁 Conclusión
 
-La API ha sido diseñada siguiendo principios REST, priorizando la simplicidad para el MVP y permitiendo evolucionar fácilmente hacia una aplicación más completa.
+La API real es más concreta que la descrita inicialmente: tiene 12 endpoints actuales y separa claramente viviendas, productos y shopping items.
 
-La estructura basada en viviendas, productos y shopping items refleja fielmente el modelo de datos definido y facilita el desarrollo tanto del backend como del frontend.
+Los productos se suben con `multipart/form-data`, su imagen se expone como bytes en un endpoint dedicado y los shopping items trabajan sobre un producto asociado, no sobre un nombre libre.

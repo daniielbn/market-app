@@ -1,27 +1,26 @@
 # 🗄️ Diseño de la Base de Datos
 
-> Documento que describe el modelo de datos de la aplicación, las entidades principales y sus relaciones.
+> Documento que describe el modelo de datos real de la aplicación y las tablas que existen actualmente.
 
 ---
 
 # 📖 Introducción
 
-La base de datos ha sido diseñada siguiendo el principio **KISS (Keep It Simple, Stupid)**, priorizando la simplicidad para el MVP sin perder la capacidad de evolucionar en futuras versiones.
+La base de datos actual sigue una estructura simple para el MVP, pero ya incluye las tres piezas que utiliza el backend: viviendas, productos y shopping items.
 
-En esta primera versión, cada vivienda dispondrá de una única lista de la compra, por lo que no es necesario introducir una entidad intermedia para representar las listas.
-
-Este enfoque reduce la complejidad del modelo de datos y simplifica tanto el backend como el frontend.
+Cada vivienda tiene sus productos propios y los shopping items referencian tanto a la vivienda como al producto asociado. Además, los shopping items usan eliminación lógica.
 
 ---
 
 # 🎯 Objetivos
 
-El modelo de datos debe permitir:
+El modelo de datos permite:
 
 - Gestionar múltiples viviendas.
 - Asociar productos a una vivienda.
-- Marcar productos como comprados.
-- Escalar fácilmente hacia nuevas funcionalidades.
+- Crear shopping items a partir de productos concretos.
+- Marcar shopping items como comprados.
+- Eliminar shopping items sin borrarlos físicamente.
 
 ---
 
@@ -29,12 +28,17 @@ El modelo de datos debe permitir:
 
 ```text
 House
- │
- │ 1
- │
- └─────────────── N
-                 │
-          ShoppingItem
+ ├── Product
+ └── ShoppingItem
+                └── Product
+```
+
+Relaciones reales:
+
+```text
+House (1) ─────── (N) Product
+House (1) ─────── (N) ShoppingItem
+Product (1) ───── (N) ShoppingItem
 ```
 
 ---
@@ -45,8 +49,6 @@ House
 
 Representa una vivienda.
 
-Cada vivienda posee un código único que permitirá a nuevos dispositivos unirse a ella.
-
 ### Campos
 
 | Campo | Tipo | Descripción |
@@ -56,6 +58,35 @@ Cada vivienda posee un código único que permitirá a nuevos dispositivos unirs
 | accessCode | String | Código de acceso único |
 | createdAt | Timestamp | Fecha de creación |
 | updatedAt | Timestamp | Última modificación |
+
+### Restricciones
+
+- `name` obligatorio, longitud máxima 100.
+- `accessCode` obligatorio, único, longitud máxima 20.
+
+---
+
+## 🛍️ Product
+
+Representa un producto asociado a una vivienda.
+
+### Campos
+
+| Campo | Tipo | Descripción |
+|--------|------|-------------|
+| id | UUID | Identificador único |
+| houseId | UUID | Vivienda propietaria |
+| name | String | Nombre del producto |
+| image | byte[] | Imagen del producto |
+| imageContentType | String | MIME type de la imagen |
+| createdAt | Timestamp | Fecha de creación |
+| updatedAt | Timestamp | Última modificación |
+
+### Restricciones
+
+- `name` obligatorio.
+- `houseId` obligatorio.
+- `image` es opcional a nivel de persistencia, aunque la API de creación la exige.
 
 ---
 
@@ -69,30 +100,46 @@ Representa un producto pendiente o comprado dentro de una vivienda.
 |--------|------|-------------|
 | id | UUID | Identificador único |
 | houseId | UUID | Vivienda propietaria |
-| name | String | Nombre del producto |
-| purchased | Boolean | Estado del producto |
+| productId | UUID | Producto asociado |
+| quantity | Integer | Cantidad |
+| purchased | Boolean | Estado de compra |
+| comment | String | Comentario opcional |
 | createdAt | Timestamp | Fecha de creación |
 | updatedAt | Timestamp | Última modificación |
-| deletedAt | Timestamp | Fecha de eliminación lógica (Soft Delete) |
+| deletedAt | Timestamp | Fecha de eliminación lógica |
+
+### Restricciones
+
+- `quantity` obligatorio y mayor o igual que 1.
+- `purchased` obligatorio, con valor inicial `false`.
+- `houseId` obligatorio.
+- `productId` obligatorio.
+- `deletedAt` se usa para soft delete.
 
 ---
 
 # 🔗 Relaciones
 
+## House → Product
+
+- Una vivienda puede tener múltiples productos.
+- Cada producto pertenece a una sola vivienda.
+
 ## House → ShoppingItem
 
-- Una vivienda puede contener múltiples productos.
-- Cada producto pertenece únicamente a una vivienda.
+- Una vivienda puede tener múltiples shopping items.
+- Cada shopping item pertenece a una sola vivienda.
 
-```text
-House (1) -------- (N) ShoppingItem
-```
+## Product → ShoppingItem
+
+- Un producto puede estar referenciado por múltiples shopping items.
+- Cada shopping item apunta a un único producto.
 
 ---
 
 # 🔑 Claves primarias
 
-Todas las entidades utilizarán claves primarias de tipo:
+Todas las tablas usan claves primarias de tipo:
 
 ```text
 UUID
@@ -101,149 +148,131 @@ UUID
 ### Motivos
 
 - No exponen el número real de registros.
-- Facilitan futuras integraciones.
-- Son ideales para aplicaciones distribuidas.
-- Son el estándar en muchas aplicaciones modernas.
+- Son útiles para integraciones distribuidas.
+- Encajan bien con el backend actual basado en JPA/Hibernate.
 
 ---
 
-# 📌 Restricciones
+# 📌 Restricciones y comportamiento
 
 ## House
 
-- El nombre será obligatorio.
-- El código de acceso será obligatorio.
-- El código de acceso deberá ser único.
+- El nombre es obligatorio.
+- El código de acceso es obligatorio.
+- El código de acceso debe ser único.
 
----
+## Product
+
+- El nombre es obligatorio.
+- Debe pertenecer a una vivienda.
+- Si se elimina la vivienda, sus productos se eliminan en cascada.
 
 ## ShoppingItem
 
-- El nombre será obligatorio.
-- Todo producto deberá pertenecer a una vivienda.
-- El estado inicial será siempre `false` (pendiente).
-- Los productos eliminados utilizarán eliminación lógica (`deletedAt`).
+- Debe pertenecer a una vivienda.
+- Debe estar asociado a un producto.
+- El estado inicial de `purchased` es siempre `false`.
+- La eliminación es lógica mediante `deletedAt`.
 
 ---
 
 # 🧹 Eliminación lógica (Soft Delete)
 
-En lugar de eliminar físicamente un producto de la base de datos, se marcará mediante el campo:
+La eliminación lógica solo se aplica a `shopping_items`.
 
-```text
-deletedAt
-```
-
-Esto permitirá en futuras versiones:
-
-- Recuperar productos eliminados.
-- Implementar historial.
-- Obtener estadísticas.
-- Auditar cambios.
-
-Las consultas normales ignorarán automáticamente aquellos registros cuyo `deletedAt` no sea nulo.
-
----
-
-# 📈 Escalabilidad
-
-El modelo ha sido diseñado para facilitar la incorporación de nuevas funcionalidades sin modificar las entidades existentes.
-
-Entre ellas:
-
-- Sistema de usuarios.
-- Miembros de una vivienda.
-- Varias listas de compra.
-- Categorías.
-- Historial.
-- Favoritos.
-- Notificaciones.
-
----
-
-# 🚀 Evolución futura
-
-Cuando la aplicación permita gestionar varias listas por vivienda, se añadirá una nueva entidad:
-
-```text
-ShoppingList
-```
-
-quedando el modelo de la siguiente manera:
-
-```text
-House
- │
- └── ShoppingList
-         │
-         └── ShoppingItem
-```
-
-Los productos existentes podrán migrarse automáticamente a una lista denominada **"Lista principal"**, sin afectar a los usuarios.
-
----
-
-# 📋 Convenciones
-
-Todas las tablas seguirán las siguientes normas:
-
-- Clave primaria UUID.
-- Campos `createdAt` y `updatedAt`.
-- Nombres de entidades en singular.
-- Relaciones mediante claves foráneas.
-- Eliminación lógica cuando sea necesario.
+En vez de borrar físicamente el registro, el backend rellena `deleted_at`. Las consultas habituales ignoran los registros con ese campo informado.
 
 ---
 
 # 🗃️ Esquema de la base de datos
 
 ```text
-House
-│
+houses
 ├── id
 ├── name
-├── accessCode
-├── createdAt
-└── updatedAt
+├── access_code
+├── created_at
+└── updated_at
 
-        │
-        │ 1
-        │
-        ▼
-
-ShoppingItem
+products
 ├── id
-├── houseId
 ├── name
+├── image
+├── image_content_type
+├── house_id
+├── created_at
+└── updated_at
+
+shopping_items
+├── id
+├── quantity
 ├── purchased
-├── createdAt
-├── updatedAt
-└── deletedAt
+├── comment
+├── deleted_at
+├── house_id
+├── product_id
+├── created_at
+└── updated_at
 ```
 
 ---
 
-# 📌 Decisiones de diseño
+# 📌 DDL actual
 
-Durante la fase de análisis se decidió no incorporar una entidad `ShoppingList` en el MVP.
+```sql
+CREATE TABLE houses (
+        id UUID PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        access_code VARCHAR(20) NOT NULL UNIQUE,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
+);
 
-Aunque inicialmente estaba contemplada, se concluyó que añadiría una complejidad innecesaria para una aplicación donde cada vivienda únicamente dispone de una lista de la compra.
+CREATE TABLE products (
+        id UUID PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        image BYTEA,
+        image_content_type VARCHAR(100),
+        house_id UUID NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_products_house
+                FOREIGN KEY (house_id)
+                REFERENCES houses(id)
+                ON DELETE CASCADE
+);
 
-Esta decisión aporta varias ventajas:
+CREATE TABLE shopping_items (
+        id UUID PRIMARY KEY,
+        quantity INTEGER NOT NULL,
+        purchased BOOLEAN NOT NULL DEFAULT FALSE,
+        comment TEXT,
+        deleted_at TIMESTAMP,
+        house_id UUID NOT NULL,
+        product_id UUID NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        CONSTRAINT fk_shopping_items_house
+                FOREIGN KEY (house_id)
+                REFERENCES houses(id)
+                ON DELETE CASCADE,
+        CONSTRAINT fk_shopping_items_product
+                FOREIGN KEY (product_id)
+                REFERENCES products(id)
+                ON DELETE CASCADE
+);
+```
 
-- Modelo de datos más sencillo.
-- Menor número de relaciones.
-- Consultas SQL más simples.
-- API REST más limpia.
-- Backend menos complejo.
-- Frontend más fácil de mantener.
+---
 
-La arquitectura sigue preparada para incorporar múltiples listas en futuras versiones mediante una migración de base de datos.
+# 🚀 Evolución futura
+
+La base actual todavía no incorpora entidades como `ShoppingList`, `User` o `Member`, pero el esquema ya puede evolucionar hacia una versión más completa sin romper la estructura principal.
 
 ---
 
 # 🏁 Conclusión
 
-El modelo de datos prioriza la simplicidad, el rendimiento y la mantenibilidad.
+El modelo real de datos es más completo que el que estaba documentado inicialmente: además de `House` y `ShoppingItem`, existe `Product` como entidad persistente y `ShoppingItem` depende de ella.
 
-Se ha diseñado un esquema mínimo que cubre todas las necesidades del MVP y que, al mismo tiempo, permite evolucionar hacia una aplicación mucho más completa sin requerir cambios drásticos en la arquitectura.
+La estructura actual prioriza simplicidad, mantiene el MVP funcional y deja espacio para crecer sin rehacer el núcleo del dominio.
