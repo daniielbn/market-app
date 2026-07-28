@@ -1,8 +1,10 @@
+import type { Product } from "./Product.ts";
+
 export interface ShoppingItem {
 
     id: string;
 
-    name: string;
+    product: Product;
 
     quantity: number;
 

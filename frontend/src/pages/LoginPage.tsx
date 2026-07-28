@@ -16,7 +16,7 @@ export default function LoginPage() {
     useEffect(() => {
 
         if (isLogged) {
-            navigate("/shopping-list");
+            navigate(`/house/${localStorage.getItem("houseName")}`);
         }
 
     }, [isLogged, navigate]);
@@ -26,7 +26,7 @@ export default function LoginPage() {
         console.log("Intentando entrar...");
 
         const house = await validateHouse({
-            accessCode
+            accessCode,
         });
 
         saveHouse(
@@ -34,7 +34,7 @@ export default function LoginPage() {
             house.houseName
         );
 
-        navigate("/shopping-list");
+        navigate(`/house/${house.houseName}`);
 
     }
 
