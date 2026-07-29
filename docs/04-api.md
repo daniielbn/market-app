@@ -144,7 +144,7 @@ image=<multipart file>
 {
     "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
     "name": "Leche",
-    "image": "<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>"
 }
 ```
 
@@ -173,7 +173,7 @@ GET /api/v1/houses/{houseId}/products
     {
         "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
         "name": "Leche",
-        "image": "<base64-image-data>"
+        "image": "data:image/png;base64,<base64-image-data>"
     }
 ]
 ```
@@ -202,7 +202,7 @@ GET /api/v1/houses/{houseId}/products/{productId}
 {
     "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
     "name": "Leche",
-    "image": "<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>"
 }
 ```
 
@@ -286,6 +286,11 @@ GET /api/v1/houses/{houseId}/shopping-items
 [
     {
         "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
+        "product": {
+            "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+            "name": "Leche",
+            "image": "data:image/png;base64,<base64-image-data>"
+        },
         "quantity": 2,
         "purchased": false,
         "comment": "Para desayunos"
@@ -330,6 +335,11 @@ POST /api/v1/houses/{houseId}/shopping-items
 ```json
 {
     "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
+    "product": {
+        "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+        "name": "Leche",
+        "image": "data:image/png;base64,<base64-image-data>"
+    },
     "quantity": 2,
     "purchased": false,
     "comment": "Para el desayuno"
@@ -369,6 +379,11 @@ PATCH /api/v1/shopping-items/{shoppingItemId}
 ```json
 {
     "id": "6b5d5ef5-ecf0-4ef7-a2d2-c0dcde70b2a7",
+    "product": {
+        "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
+        "name": "Leche",
+        "image": "data:image/png;base64,<base64-image-data>"
+    },
     "quantity": 3,
     "purchased": true,
     "comment": "Ya comprado"
@@ -391,11 +406,12 @@ PATCH /api/v1/shopping-items/{shoppingItemId}
 ## 11. Eliminar un shopping item
 
 ```http
-DELETE /api/v1/shopping-items/{shoppingItemId}
+DELETE /api/v1/houses/{houseId}/shopping-items/{shoppingItemId}
 ```
 
 ### Path parameters
 
+- `houseId`: identificador de la vivienda.
 - `shoppingItemId`: identificador del shopping item.
 
 ### Request body
@@ -410,6 +426,11 @@ No aplica.
 
 - `204 No Content`
 - `404 Not Found`
+
+### Notas
+
+- El borrado solo afecta al shopping item si pertenece a la vivienda indicada.
+- Si el shopping item no existe o no pertenece a esa casa, el backend responde `404 Not Found`.
 
 ---
 
@@ -488,7 +509,7 @@ image=<multipart file>
 {
     "id": "uuid",
     "name": "Leche",
-    "image": "<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>"
 }
 ```
 
@@ -517,6 +538,11 @@ image=<multipart file>
 ```json
 {
     "id": "uuid",
+    "product": {
+        "id": "uuid",
+        "name": "Leche",
+        "image": "data:image/png;base64,<base64-image-data>"
+    },
     "quantity": 2,
     "purchased": false,
     "comment": "Opcional"
