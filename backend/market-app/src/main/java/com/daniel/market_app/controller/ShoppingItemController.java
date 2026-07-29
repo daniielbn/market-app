@@ -44,12 +44,13 @@ public class ShoppingItemController {
         return shoppingItemService.updateShoppingItem(shoppingItemId, request);
     }
 
-    @DeleteMapping("/shopping-items/{shoppingItemId}")
+    @DeleteMapping("/houses/{houseId}/shopping-items/{shoppingItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteShoppingItem(
+            @PathVariable UUID houseId,
             @PathVariable UUID shoppingItemId) {
 
-        shoppingItemService.deleteShoppingItem(shoppingItemId);
+        shoppingItemService.deleteShoppingItem(houseId, shoppingItemId);
     }
 
     @DeleteMapping("/houses/{houseId}/shopping-items")

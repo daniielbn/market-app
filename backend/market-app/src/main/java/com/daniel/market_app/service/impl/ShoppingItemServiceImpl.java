@@ -93,9 +93,11 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
 
     @Override
     @Transactional
-    public void deleteShoppingItem(UUID shoppingItemId) {
+    public void deleteShoppingItem(UUID houseId, UUID shoppingItemId) {
 
-        ShoppingItem shoppingItem = getShoppingItem(shoppingItemId);
+        ShoppingItem shoppingItem = shoppingItemRepository
+                .findByIdAndHouseIdAndDeletedAtIsNull(shoppingItemId, houseId)
+                .orElseThrow(() -> new ShoppingItemNotFoundException(shoppingItemId));
 
         shoppingItem.setDeletedAt(LocalDateTime.now());
     }

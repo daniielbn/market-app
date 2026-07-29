@@ -17,7 +17,7 @@ public interface ShoppingItemService {
     ShoppingItemResponse updateShoppingItem(UUID shoppingItemId,
                                             UpdateShoppingItemRequest request);
 
-    void deleteShoppingItem(UUID shoppingItemId);
+    void deleteShoppingItem(UUID houseId, UUID shoppingItemId);
 
     void deleteAllByHouseId(UUID houseId);
 
