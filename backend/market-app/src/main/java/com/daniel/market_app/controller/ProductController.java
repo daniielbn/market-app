@@ -1,7 +1,6 @@
 package com.daniel.market_app.controller;
 
 import com.daniel.market_app.dto.request.CreateProductRequest;
-import com.daniel.market_app.dto.response.ProductItemResponse;
 import com.daniel.market_app.dto.response.ProductResponse;
 import com.daniel.market_app.service.ProductService;
 import jakarta.validation.Valid;
@@ -41,7 +40,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/houses/{houseId}/products")
-	public List<ProductItemResponse> getProducts(
+	public List<ProductResponse> getProducts(
 			@PathVariable UUID houseId) {
 
 		return productService.findAllByHouseId(houseId);

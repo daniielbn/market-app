@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.daniel.market_app.dto.request.CreateProductRequest;
-import com.daniel.market_app.dto.response.ProductItemResponse;
 import com.daniel.market_app.dto.response.ProductResponse;
 
 public interface ProductService {
@@ -14,7 +13,7 @@ public interface ProductService {
         CreateProductRequest request
     );
 
-    List<ProductItemResponse> findAllByHouseId(
+    List<ProductResponse> findAllByHouseId(
         UUID houseId
     );
 
