@@ -4,6 +4,6 @@ export interface Product {
 
     name: string;
 
-    imageUrl: string;
+    image: string;
     
 }
