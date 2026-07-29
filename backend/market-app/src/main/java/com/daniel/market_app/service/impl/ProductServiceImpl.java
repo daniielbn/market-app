@@ -95,12 +95,21 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private ProductResponse toResponse(Product product) {
+		String image = null;
+
+		if (product.getImage() != null) {
+			String contentType = product.getImageContentType() == null
+					? "image/png"
+					: product.getImageContentType();
+
+			image = "data:" + contentType + ";base64,"
+					+ Base64.getEncoder().encodeToString(product.getImage());
+		}
+
 		return new ProductResponse(
 				product.getId(),
 				product.getName(),
-				product.getImage() == null
-						? null
-						: Base64.getEncoder().encodeToString(product.getImage())
+				image
 		);
 	}
 }
