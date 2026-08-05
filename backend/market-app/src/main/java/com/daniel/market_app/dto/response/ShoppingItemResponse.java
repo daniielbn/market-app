@@ -1,5 +1,6 @@
 package com.daniel.market_app.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ShoppingItemResponse(
@@ -12,7 +13,9 @@ public record ShoppingItemResponse(
 
         boolean purchased,
 
-        String comment
+        String comment,
+
+        LocalDateTime createdAt
 
 ) {
 }

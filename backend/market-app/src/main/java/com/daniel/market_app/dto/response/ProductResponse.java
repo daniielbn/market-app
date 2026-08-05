@@ -1,5 +1,6 @@
 package com.daniel.market_app.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ProductResponse(
@@ -8,7 +9,9 @@ public record ProductResponse(
 
         String name,
 
-        String image
+        String image,
+
+        LocalDateTime createdAt
 
 ) {
 }
