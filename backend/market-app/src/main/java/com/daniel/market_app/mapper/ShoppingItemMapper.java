@@ -28,7 +28,8 @@ public interface ShoppingItemMapper {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
-                image
+            image,
+            product.getCreatedAt()
         );
     }
 

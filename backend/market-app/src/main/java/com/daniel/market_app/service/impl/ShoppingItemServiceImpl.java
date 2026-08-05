@@ -60,6 +60,7 @@ public class ShoppingItemServiceImpl implements ShoppingItemService {
         shoppingItem.setQuantity(request.quantity());
         shoppingItem.setComment(request.comment());
         shoppingItem.setPurchased(false);
+        shoppingItem.setCreatedAt(shoppingItem.getCreatedAt());
 
         ShoppingItem savedShoppingItem =
                 shoppingItemRepository.save(shoppingItem);
