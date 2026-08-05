@@ -6,4 +6,5 @@ export interface ShoppingItemResponse {
     quantity: number;
     purchased: boolean;
     comment: string | null;
+    createdAt: string;
 }

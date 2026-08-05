@@ -1,0 +1,143 @@
+.login-page {
+
+    max-width: 80rem;
+
+    margin: 0 auto;
+
+    padding: 2.5rem 1.5rem;
+
+}
+
+.login-page__card {
+
+    max-width: 32rem;
+
+    margin: 0 auto;
+
+    padding: 1.5rem;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 24px;
+
+    background: white;
+
+    box-shadow: var(--shadow);
+
+}
+
+.login-page__label {
+
+    display: block;
+
+    margin-bottom: .5rem;
+
+    font-size: .95rem;
+
+    font-weight: 500;
+
+    color: var(--text-secondary);
+
+}
+
+.login-page__row {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .75rem;
+
+}
+
+.login-page__input {
+
+    flex: 1;
+
+    padding: .85rem 1rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    background: white;
+
+    color: var(--text);
+
+    outline: none;
+
+}
+
+.login-page__input::placeholder {
+
+    color: var(--text-secondary);
+
+}
+
+.login-page__input:focus {
+
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 4px var(--focus-ring);
+
+}
+
+.login-page__button {
+
+    padding: .85rem 1.5rem;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-weight: 600;
+
+    transition: background-color .15s ease;
+
+}
+
+.login-page__button:hover {
+
+    background: var(--primary-hover);
+
+}
+
+@media (min-width: 640px) {
+
+    .login-page__row {
+
+        flex-direction: row;
+
+        align-items: center;
+
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .login-page {
+
+        padding: 1.25rem 1rem 1.5rem;
+
+    }
+
+    .login-page__card {
+
+        padding: 1.1rem;
+
+        border-radius: 20px;
+
+    }
+
+    .login-page__button {
+
+        width: 100%;
+
+    }
+
+}

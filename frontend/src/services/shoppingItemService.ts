@@ -1,5 +1,12 @@
 import api from "../api/axios";
 import type { ShoppingItemResponse } from "../types/dto/ShoppingItemResponse";
+import type { CreateShoppingItemRequest } from "../types/dto/CreateShoppingItemRequest";
+
+export interface UpdateShoppingItemRequest {
+    quantity?: number;
+    purchased?: boolean;
+    comment?: string;
+}
 
 export async function getShoppingItems(
     houseId: string
@@ -18,16 +25,20 @@ export async function updateShoppingItemPurchased(
     purchased: boolean
 ): Promise<ShoppingItemResponse> {
 
-    console.log("Actualizando estado de compra del producto:", {
-        shoppingItemId,
+    return updateShoppingItem(shoppingItemId, {
         purchased,
     });
 
+}
+
+export async function updateShoppingItem(
+    shoppingItemId: string,
+    request: UpdateShoppingItemRequest
+): Promise<ShoppingItemResponse> {
+
     const response = await api.patch<ShoppingItemResponse>(
         `/shopping-items/${shoppingItemId}`,
-        {
-            purchased,
-        }
+        request
     );
 
     return response.data;
@@ -52,4 +63,18 @@ export async function clearShoppingItems(
     await api.delete(
         `/houses/${houseId}/shopping-items`
     );
+}
+
+export async function createShoppingItem(
+    houseId: string,
+    request: CreateShoppingItemRequest
+): Promise<ShoppingItemResponse> {
+
+    const response = await api.post<ShoppingItemResponse>(
+        `/houses/${houseId}/shopping-items`,
+        request
+    );
+
+    return response.data;
+
 }

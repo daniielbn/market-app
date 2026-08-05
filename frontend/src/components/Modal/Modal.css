@@ -1,0 +1,197 @@
+.modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 1rem;
+
+    background: rgba(17, 24, 39, 0.35);
+
+    z-index: 1000;
+
+}
+
+.modal-container {
+
+    width: 100%;
+
+    max-width: 500px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    box-shadow: var(--shadow);
+
+    overflow: hidden;
+
+    animation: modalAppear 0.2s ease-out;
+
+}
+
+.modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 1rem 1.25rem;
+
+    border-bottom: 1px solid var(--border-light);
+
+}
+
+.modal-header h2 {
+
+    margin: 0;
+
+    font-size: 1.05rem;
+
+    font-weight: 600;
+
+    color: var(--text);
+
+}
+
+.modal-header--blue {
+
+    background: var(--primary);
+
+    border-bottom-color: rgba(255, 255, 255, .12);
+
+}
+
+.modal-header--blue .modal-header__title--light {
+
+    color: white;
+
+}
+
+.modal-header--blue .modal-close-button {
+
+    color: rgba(255, 255, 255, .85);
+
+}
+
+.modal-header--blue .modal-close-button:hover {
+
+    background: rgba(255, 255, 255, .14);
+
+    color: white;
+
+}
+
+.modal-close-button {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 36px;
+
+    height: 36px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    font-size: 1.1rem;
+
+    transition:
+        background-color .2s,
+        color .2s;
+
+}
+
+.modal-close-button:hover {
+
+    background: var(--surface-hover);
+
+    color: var(--text);
+
+}
+
+.modal-content {
+
+    padding: 1.25rem;
+
+}
+
+@media (max-width: 640px) {
+
+    .modal-overlay {
+
+        padding: .5rem;
+
+        align-items: flex-end;
+
+    }
+
+    .modal-container {
+
+        max-width: 100%;
+
+        max-height: calc(100vh - 1rem);
+
+        border-radius: 18px 18px 0 0;
+
+    }
+
+    .modal-header {
+
+        padding: .9rem 1rem;
+
+    }
+
+    .modal-content {
+
+        padding: 1rem;
+
+    }
+
+    .modal-close-button {
+
+        width: 32px;
+
+        height: 32px;
+
+    }
+
+}
+
+@keyframes modalAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}

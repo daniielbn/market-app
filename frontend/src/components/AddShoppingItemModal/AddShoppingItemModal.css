@@ -1,0 +1,283 @@
+.add-shopping-item-modal {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .9rem;
+
+}
+
+.product-image {
+
+    width: 112px;
+
+    height: 112px;
+
+    margin: 0 auto;
+
+    object-fit: contain;
+
+    border-radius: 18px;
+
+    border: 1px solid var(--border-light);
+
+    background: var(--surface-muted);
+
+    padding: .5rem;
+
+}
+
+.add-shopping-item-modal h3 {
+
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 1.15rem;
+
+    font-weight: 600;
+
+    color: var(--text);
+
+}
+
+.add-shopping-item-modal label {
+
+    font-size: 0.95rem;
+
+    font-weight: 500;
+
+    color: var(--text-secondary);
+
+}
+
+.quantity-selector {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 1rem;
+
+}
+
+.quantity-selector button {
+
+    width: 40px;
+
+    height: 40px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+
+    color: var(--surface);
+
+    font-size: 1.3rem;
+
+    transition:
+        background-color .2s,
+        transform .15s;
+
+}
+
+.quantity-selector button:hover {
+
+    background: var(--primary-hover);
+
+}
+
+.quantity-selector button:active {
+
+    transform: scale(0.95);
+
+}
+
+.quantity-selector span {
+
+    min-width: 36px;
+
+    text-align: center;
+
+    font-size: 1.15rem;
+
+    font-weight: 600;
+
+    color: var(--text);
+
+}
+
+.add-shopping-item-modal textarea {
+
+    width: 100%;
+
+    min-height: 84px;
+
+    resize: vertical;
+
+    padding: .8rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font: inherit;
+
+    transition:
+        border-color .2s,
+        box-shadow .2s;
+
+}
+
+.add-shopping-item-modal textarea:focus {
+
+    outline: none;
+
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 3px rgba(2, 99, 144, 0.12);
+
+}
+
+.modal-actions {
+
+    display: flex;
+
+    gap: 1rem;
+
+    margin-top: .5rem;
+
+}
+
+.cancel-button,
+.confirm-button {
+
+    flex: 1;
+
+    padding: .8rem 1rem;
+
+    border: none;
+
+    border-radius: 10px;
+
+    font-weight: 500;
+
+    transition:
+        background-color .2s,
+        transform .15s;
+
+}
+
+.cancel-button {
+
+    background: var(--surface-hover);
+
+    color: var(--text);
+
+    border: 1px solid var(--border);
+
+}
+
+.cancel-button:hover {
+
+    background: var(--border-light);
+
+}
+
+.confirm-button {
+
+    background: var(--primary);
+
+    color: var(--surface);
+
+}
+
+.confirm-button:hover:not(:disabled) {
+
+    background: var(--primary-hover);
+
+}
+
+.cancel-button:active,
+.confirm-button:active {
+
+    transform: scale(0.98);
+
+}
+
+.confirm-button:disabled,
+.cancel-button:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+
+}
+
+@media (max-width: 640px) {
+
+    .add-shopping-item-modal {
+
+        gap: .75rem;
+
+    }
+
+    .product-image {
+
+        width: 96px;
+
+        height: 96px;
+
+    }
+
+    .add-shopping-item-modal h3 {
+
+        font-size: 1.05rem;
+
+    }
+
+    .quantity-selector {
+
+        gap: .8rem;
+
+    }
+
+    .quantity-selector button {
+
+        width: 42px;
+
+        height: 42px;
+
+    }
+
+    .add-shopping-item-modal textarea {
+
+        min-height: 72px;
+
+    }
+
+    .modal-actions {
+
+        flex-direction: column;
+
+        gap: .6rem;
+
+    }
+
+    .cancel-button,
+    .confirm-button {
+
+        width: 100%;
+
+    }
+
+}

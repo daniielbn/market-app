@@ -1,0 +1,19 @@
+.main-layout {
+
+    min-height: 100vh;
+
+    background: linear-gradient(180deg, rgba(15, 76, 129, .05), rgba(245, 246, 248, 1) 180px);
+
+    color: var(--text);
+
+}
+
+@media (max-width: 640px) {
+
+    .main-layout {
+
+        background: linear-gradient(180deg, rgba(15, 76, 129, .04), rgba(245, 246, 248, 1) 120px);
+
+    }
+
+}

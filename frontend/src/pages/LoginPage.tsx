@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { validateHouse } from "../services/houseService";
 import { saveHouse } from "../utils/localStorage";
 import { useHouse } from "../hooks/useHouse";
+import MainLayout from "../layouts/MainLayout";
+import PageHeader from "../components/Header/PageHeader";
+
+import "./LoginPage.css";
 
 export default function LoginPage() {
 
@@ -16,7 +20,7 @@ export default function LoginPage() {
     useEffect(() => {
 
         if (isLogged) {
-            navigate(`/house/${localStorage.getItem("houseName")}`);
+            navigate("/house");
         }
 
     }, [isLogged, navigate]);
@@ -34,28 +38,55 @@ export default function LoginPage() {
             house.houseName
         );
 
-        navigate(`/house/${house.houseName}`);
+        navigate("/house");
 
     }
 
     return (
-        <div>
+        <MainLayout>
 
-            <h1>Market App</h1>
-
-            <p>Introduce el código de acceso</p>
-
-            <input
-                type="text"
-                value={accessCode}
-                onChange={(event) => setAccessCode(event.target.value)}
+            <PageHeader
+                title="Market"
+                subtitle="Introduce el código de acceso para entrar"
             />
 
-            <button onClick={handleLogin}>
-                Entrar
-            </button>
+            <main className="login-page">
 
-        </div>
+                <section className="login-page__card">
+
+                    <label
+                        htmlFor="accessCode"
+                        className="login-page__label"
+                    >
+                        Código de acceso
+                    </label>
+
+                    <div className="login-page__row">
+
+                        <input
+                            id="accessCode"
+                            type="text"
+                            value={accessCode}
+                            onChange={(event) => setAccessCode(event.target.value)}
+                            placeholder="Escribe el código de tu casa"
+                            className="login-page__input"
+                        />
+
+                        <button
+                            type="button"
+                            onClick={handleLogin}
+                            className="login-page__button"
+                        >
+                            Entrar
+                        </button>
+
+                    </div>
+
+                </section>
+
+            </main>
+
+        </MainLayout>
     );
 
 }

@@ -182,3 +182,75 @@
     border-right-color: var(--border);
   }
 }
+
+@media (max-width: 640px) {
+
+  .counter {
+
+    font-size: 14px;
+
+    padding: 4px 8px;
+
+    margin-bottom: 18px;
+
+  }
+
+  .hero .base {
+
+    width: 140px;
+
+  }
+
+  .hero .framework {
+
+    top: 28px;
+
+    height: 24px;
+
+  }
+
+  .hero .vite {
+
+    top: 90px;
+
+    height: 22px;
+
+  }
+
+  #center {
+
+    padding: 24px 16px 20px;
+
+    gap: 16px;
+
+  }
+
+  #next-steps > div {
+
+    padding: 20px 16px;
+
+  }
+
+  #next-steps ul {
+
+    gap: 6px;
+
+    margin-top: 20px;
+
+  }
+
+  #next-steps ul li {
+
+    flex: 1 1 100%;
+
+  }
+
+  #next-steps ul a {
+
+    width: 100%;
+
+    justify-content: center;
+
+  }
+
+}

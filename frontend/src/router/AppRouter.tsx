@@ -9,8 +9,10 @@ export default function AppRouter() {
             <Routes>
                 <Route path="/" element={<LoginPage />} />
 
-                <Route path="/house/:houseId" 
-                element={<HousePage />} />
+                <Route
+                    path="/house"
+                    element={<HousePage />}
+                />
                 
             </Routes>
         </BrowserRouter>
