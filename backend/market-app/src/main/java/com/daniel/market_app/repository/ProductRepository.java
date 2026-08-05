@@ -11,6 +11,11 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     List<Product> findAllByHouseId(UUID houseId);
 
+    boolean existsByHouseIdAndNameIgnoreCase(
+        UUID houseId,
+        String name
+    );
+
     Optional<Product> findByIdAndHouseId(
         UUID productId,
         UUID houseId
