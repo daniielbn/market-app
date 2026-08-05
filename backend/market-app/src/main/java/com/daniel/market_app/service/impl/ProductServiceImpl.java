@@ -5,6 +5,7 @@ import com.daniel.market_app.domain.Product;
 import com.daniel.market_app.dto.request.CreateProductRequest;
 import com.daniel.market_app.dto.response.ProductResponse;
 import com.daniel.market_app.exception.HouseNotFoundException;
+import com.daniel.market_app.exception.ProductAlreadyExistsException;
 import com.daniel.market_app.exception.ProductNotFoundException;
 import com.daniel.market_app.repository.HouseRepository;
 import com.daniel.market_app.repository.ProductRepository;
@@ -33,10 +34,15 @@ public class ProductServiceImpl implements ProductService {
 			CreateProductRequest request) {
 
 		House house = getHouse(houseId);
+		String productName = request.name().trim();
+
+		if (productRepository.existsByHouseIdAndNameIgnoreCase(houseId, productName)) {
+			throw new ProductAlreadyExistsException(houseId, productName);
+		}
 
 		Product product = new Product();
 		product.setHouse(house);
-		product.setName(request.name());
+		product.setName(productName);
 
 		if (request.image() != null) {
 			try {
@@ -109,7 +115,8 @@ public class ProductServiceImpl implements ProductService {
 		return new ProductResponse(
 				product.getId(),
 				product.getName(),
-				image
+				image,
+				product.getCreatedAt()
 		);
 	}
 }
