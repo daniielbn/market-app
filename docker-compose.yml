@@ -1,8 +1,7 @@
-version: "3.9"
-
 services:
 
   postgres:
+
     image: postgres:17
 
     container_name: market-app-postgres
@@ -21,4 +20,5 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
+
   postgres_data:
