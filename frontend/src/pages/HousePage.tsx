@@ -344,9 +344,29 @@ function HousePage() {
 
     if (loading) {
         return (
-            <div>
-                <p>Cargando lista de la compra...</p>
-            </div>
+            <MainLayout>
+
+                <main className="house-page">
+
+                    <section className="house-page__card">
+
+                        <div className="house-page__empty-state">
+
+                            <p className="house-page__empty-title">
+                                Cargando lista de la compra...
+                            </p>
+
+                            <p className="house-page__empty-text">
+                                Estamos obteniendo los productos de la casa.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                </main>
+
+            </MainLayout>
         );
     }
 
