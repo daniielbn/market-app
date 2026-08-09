@@ -138,13 +138,16 @@ name=Leche
 image=<multipart file>
 ```
 
+El backend comprueba antes de guardar si ya existe un producto con el mismo nombre en la misma vivienda. Si existe, no lo crea.
+
 ### Response body
 
 ```json
 {
     "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
     "name": "Leche",
-    "image": "data:image/png;base64,<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>",
+    "createdAt": "2026-07-29T10:15:30"
 }
 ```
 
@@ -153,6 +156,7 @@ image=<multipart file>
 - `201 Created`
 - `400 Bad Request`
 - `404 Not Found`
+- `409 Conflict`
 
 ---
 
@@ -173,7 +177,8 @@ GET /api/v1/houses/{houseId}/products
     {
         "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
         "name": "Leche",
-        "image": "data:image/png;base64,<base64-image-data>"
+        "image": "data:image/png;base64,<base64-image-data>",
+        "createdAt": "2026-07-29T10:15:30"
     }
 ]
 ```
@@ -202,7 +207,8 @@ GET /api/v1/houses/{houseId}/products/{productId}
 {
     "id": "3e4a8ed9-2f2f-4d0f-a6ed-9d7b1d2d0e2a",
     "name": "Leche",
-    "image": "data:image/png;base64,<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>",
+    "createdAt": "2026-07-29T10:15:30"
 }
 ```
 
@@ -509,7 +515,8 @@ image=<multipart file>
 {
     "id": "uuid",
     "name": "Leche",
-    "image": "data:image/png;base64,<base64-image-data>"
+    "image": "data:image/png;base64,<base64-image-data>",
+    "createdAt": "2026-07-29T10:15:30"
 }
 ```
 
