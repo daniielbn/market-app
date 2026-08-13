@@ -26,6 +26,8 @@ body {
 
     overflow-x: hidden;
 
+    overscroll-behavior-x: none;
+
     min-width: 320px;
 
     min-height: 100vh;

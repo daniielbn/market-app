@@ -12,6 +12,8 @@ body,
 
     overflow-x: hidden;
 
+    overscroll-behavior-x: none;
+
 }
 
 html {

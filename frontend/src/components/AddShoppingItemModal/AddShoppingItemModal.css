@@ -40,6 +40,10 @@
 
     color: var(--text);
 
+    overflow-wrap: break-word;
+
+    word-break: break-word;
+
 }
 
 .add-shopping-item-modal label {

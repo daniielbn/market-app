@@ -16,6 +16,8 @@
 
     background: rgba(0, 0, 0, .45);
 
+    overscroll-behavior: none;
+
 }
 
 .add-pantry-item-modal {
@@ -182,15 +184,23 @@
 
     height: 3rem;
 
+    flex-shrink: 0;
+
     object-fit: contain;
 
 }
 
 .add-pantry-item-modal__selected-product span {
 
+    min-width: 0;
+
     color: var(--text);
 
     font-weight: 600;
+
+    overflow-wrap: break-word;
+
+    word-break: break-word;
 
 }
 
