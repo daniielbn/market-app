@@ -1,6 +1,8 @@
 import type { Product } from "../../types/Product";
 import type { PantryItem } from "../../types/PantryItem";
 
+import crossIcon from "../../assets/icon/cross.svg";
+
 import "./PantryItemCard.css";
 
 interface PantryItemCardProps {
@@ -9,12 +11,23 @@ interface PantryItemCardProps {
 
     product: Product;
 
+    onDelete: (
+        pantryItemId: string
+    ) => void;
+
 }
 
 function PantryItemCard({
     item,
     product,
+    onDelete,
 }: PantryItemCardProps) {
+
+    const handleDelete = () => {
+
+        onDelete(item.id);
+
+    };
 
     const expirationDate = new Date(
         `${item.expirationDate}T00:00:00`
@@ -64,11 +77,29 @@ function PantryItemCard({
 
             <div className="pantry-item-card__content">
 
-                <h3 className="pantry-item-card__name">
+                <div className="pantry-item-card__header">
 
-                    {product.name}
+                    <h3 className="pantry-item-card__name">
 
-                </h3>
+                        {product.name}
+
+                    </h3>
+
+                    <button
+                        type="button"
+                        className="pantry-item-card__delete-button"
+                        onClick={handleDelete}
+                        aria-label={`Eliminar ${product.name} de la despensa`}
+                    >
+
+                        <img
+                            src={crossIcon}
+                            alt=""
+                        />
+
+                    </button>
+
+                </div>
 
                 <div className="pantry-item-card__expiration">
 

@@ -11,6 +11,7 @@ import AddPantryItemModal
 import {
     getPantryItems,
     createPantryItem,
+    deletePantryItem,
 } from "../services/pantryItemService";
 
 import type { PantryItemResponse }
@@ -169,6 +170,64 @@ function PantryPage() {
     };
 
 
+    const handleDeletePantryItem = async (
+        pantryItemId: string
+    ) => {
+
+        const itemToDelete =
+            pantryItems.find(
+                (item) =>
+                    item.id === pantryItemId
+            );
+
+        const product = itemToDelete
+            ? products.find(
+                (product) =>
+                    product.id === itemToDelete.productId
+            )
+            : undefined;
+
+        const confirmed =
+            window.confirm(
+                product
+                    ? `¿Seguro que quieres eliminar ${product.name} de la despensa?`
+                    : "¿Seguro que quieres eliminar este producto de la despensa?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            await deletePantryItem(
+                houseId,
+                pantryItemId
+            );
+
+            setPantryItems((currentItems) =>
+                currentItems.filter(
+                    (item) =>
+                        item.id !== pantryItemId
+                )
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Error al eliminar el producto de la despensa:",
+                error
+            );
+
+            setError(
+                "No se ha podido eliminar el producto de la despensa."
+            );
+
+        }
+
+    };
+
+
     return (
 
         <MainLayout
@@ -249,6 +308,7 @@ function PantryPage() {
                                                 key={item.id}
                                                 item={item}
                                                 product={product}
+                                                onDelete={handleDeletePantryItem}
                                             />
 
                                         );
