@@ -1,7 +1,7 @@
 import "./ShoppingItemCard.css";
 
-import { useEffect, useState, type ChangeEvent } from "react";
-import type { ShoppingItemResponse } from "../../types/dto/ShoppingItemResponse";
+import type { ChangeEvent } from "react";
+import type { ShoppingItemResponse } from "../../types/dto/response/ShoppingItemResponse";
 
 import crossIcon from "../../assets/icon/cross.svg";
 
@@ -33,14 +33,6 @@ function ShoppingItemCard({
     onDelete,
 
 }: ShoppingItemCardProps) {
-
-    const [comment, setComment] = useState(item.comment ?? "");
-
-    useEffect(() => {
-
-        setComment(item.comment ?? "");
-
-    }, [item.comment]);
 
     const handlePurchasedChange = (
         event: ChangeEvent<HTMLInputElement>
@@ -74,14 +66,6 @@ function ShoppingItemCard({
     const handleDelete = () => {
 
         onDelete(item.id);
-
-    };
-
-    const handleSendComment = () => {
-
-        onUpdate(item.id, {
-            comment: comment.trim(),
-        });
 
     };
 

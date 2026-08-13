@@ -1,0 +1,301 @@
+.add-pantry-item-modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 1rem;
+
+    background: rgba(0, 0, 0, .45);
+
+}
+
+.add-pantry-item-modal {
+
+    width: 100%;
+
+    max-width: 500px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 20px;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow);
+
+}
+
+.add-pantry-item-modal__header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 1.25rem 1.5rem;
+
+    border-bottom: 1px solid var(--border-light);
+
+}
+
+.add-pantry-item-modal__header h2 {
+
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1.25rem;
+
+    font-weight: 700;
+
+}
+
+.add-pantry-item-modal__close {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 2rem;
+
+    height: 2rem;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    font-size: 1.5rem;
+
+    cursor: pointer;
+
+}
+
+.add-pantry-item-modal__close:hover {
+
+    background: var(--surface-hover);
+
+    color: var(--text);
+
+}
+
+.add-pantry-item-modal__content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.25rem;
+
+    padding: 1.5rem;
+
+}
+
+.add-pantry-item-modal__field {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .5rem;
+
+}
+
+.add-pantry-item-modal__field label {
+
+    color: var(--text);
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+}
+
+.add-pantry-item-modal__field input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: .8rem 1rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: var(--surface);
+
+    color: var(--text);
+
+    font: inherit;
+
+    outline: none;
+
+}
+
+.add-pantry-item-modal__field input:focus {
+
+    border-color: var(--primary);
+
+}
+
+.add-pantry-item-modal__selected-product {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: .75rem;
+
+    padding: .75rem;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 14px;
+
+    background: var(--surface-muted);
+
+}
+
+.add-pantry-item-modal__selected-product img {
+
+    width: 3rem;
+
+    height: 3rem;
+
+    object-fit: contain;
+
+}
+
+.add-pantry-item-modal__selected-product span {
+
+    color: var(--text);
+
+    font-weight: 600;
+
+}
+
+.add-pantry-item-modal__actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: .75rem;
+
+    padding: 1rem 1.5rem 1.5rem;
+
+}
+
+.add-pantry-item-modal__cancel {
+
+    width: auto;
+
+    padding: .75rem 1.2rem;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: var(--surface-muted);
+
+    color: var(--text);
+
+    cursor: pointer;
+
+}
+
+.add-pantry-item-modal__cancel:hover:not(:disabled) {
+
+    background: var(--surface-hover);
+
+}
+
+.add-pantry-item-modal__confirm {
+
+    width: auto;
+
+    padding: .75rem 1.4rem;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: var(--primary);
+
+    color: white;
+
+    cursor: pointer;
+
+}
+
+.add-pantry-item-modal__confirm:hover:not(:disabled) {
+
+    background: var(--primary-hover);
+
+}
+
+.add-pantry-item-modal__confirm:disabled {
+
+    cursor: not-allowed;
+
+    opacity: .5;
+
+}
+
+.add-pantry-item-modal__cancel:disabled {
+
+    cursor: not-allowed;
+
+    opacity: .5;
+
+}
+
+@media (max-width: 640px) {
+
+    .add-pantry-item-modal {
+
+        border-radius: 18px;
+
+    }
+
+    .add-pantry-item-modal__header {
+
+        padding: 1rem 1.1rem;
+
+    }
+
+    .add-pantry-item-modal__content {
+
+        padding: 1.1rem;
+
+    }
+
+    .add-pantry-item-modal__actions {
+
+        padding: .75rem 1.1rem 1.1rem;
+
+    }
+
+}

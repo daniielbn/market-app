@@ -1,0 +1,235 @@
+.pantry-item-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: .9rem;
+
+    padding: .95rem;
+
+    margin-bottom: 1rem;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15, 76, 129, .025),
+            rgba(255,255,255,1)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    box-shadow: var(--shadow);
+
+    transition:
+        transform .2s,
+        box-shadow .2s,
+        border-color .2s;
+
+}
+
+.pantry-item-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-hover);
+
+    border-color: rgba(15, 76, 129, .14);
+
+}
+
+
+/* =========================
+   IMAGEN
+   ========================= */
+
+.pantry-item-card__image {
+
+    width: 92px;
+
+    height: 92px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    background: var(--surface-muted);
+
+    border: 1px solid var(--border-light);
+
+    padding: .35rem;
+
+}
+
+
+/* =========================
+   CONTENIDO
+   ========================= */
+
+.pantry-item-card__content {
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: .55rem;
+
+    min-width: 0;
+
+}
+
+
+/* =========================
+   NOMBRE
+   ========================= */
+
+.pantry-item-card__name {
+
+    margin: 0;
+
+    font-size: 1.15rem;
+
+    font-weight: 600;
+
+    color: var(--text);
+
+    line-height: 1.2;
+
+    overflow-wrap: break-word;
+
+    word-break: break-word;
+
+}
+
+
+/* =========================
+   CADUCIDAD
+   ========================= */
+
+.pantry-item-card__expiration {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: .5rem;
+
+    margin: 0;
+
+    font-size: .9rem;
+
+    color: var(--text-secondary);
+
+}
+
+
+/* =========================
+   CÍRCULO DE ESTADO
+   ========================= */
+
+.pantry-item-card__expiration-dot {
+
+    width: 10px;
+
+    height: 10px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+}
+
+
+/* Verde */
+
+.pantry-item-card__expiration-dot--green {
+
+    background: #22c55e;
+
+}
+
+
+/* Amarillo */
+
+.pantry-item-card__expiration-dot--yellow {
+
+    background: #eab308;
+
+}
+
+
+/* Rojo */
+
+.pantry-item-card__expiration-dot--red {
+
+    background: #ef4444;
+
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 640px) {
+
+    .pantry-item-card {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: .8rem;
+
+        padding: .85rem;
+
+        border-radius: 18px;
+
+    }
+
+    .pantry-item-card__image {
+
+        width: 100%;
+
+        height: 140px;
+
+    }
+
+    .pantry-item-card__content {
+
+        gap: .6rem;
+
+    }
+
+    .pantry-item-card__name {
+
+        font-size: 1.05rem;
+
+        line-height: 1.15;
+
+    }
+
+    .pantry-item-card__expiration {
+
+        font-size: .88rem;
+
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .pantry-item-card__image {
+
+        height: 120px;
+
+    }
+
+}

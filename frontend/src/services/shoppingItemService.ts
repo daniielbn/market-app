@@ -1,6 +1,6 @@
 import api from "../api/axios";
-import type { ShoppingItemResponse } from "../types/dto/ShoppingItemResponse";
-import type { CreateShoppingItemRequest } from "../types/dto/CreateShoppingItemRequest";
+import type { ShoppingItemResponse } from "../types/dto/response/ShoppingItemResponse";
+import type { CreateShoppingItemRequest } from "../types/dto/request/CreateShoppingItemRequest";
 
 export interface UpdateShoppingItemRequest {
     quantity?: number;

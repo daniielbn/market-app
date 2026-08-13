@@ -12,6 +12,8 @@ interface ProductAutocompleteProps {
 
     onCreate: () => void;
 
+    showCreate?: boolean;
+
 }
 
 function ProductAutocomplete({
@@ -19,6 +21,7 @@ function ProductAutocomplete({
     searchText,
     onSelect,
     onCreate,
+    showCreate = true,
 }: ProductAutocompleteProps) {
 
     if (searchText.trim() === "") {
@@ -78,7 +81,7 @@ function ProductAutocomplete({
 
             ))}
 
-            {!exactMatch && (
+            {showCreate && !exactMatch && (
 
                 <button
                     type="button"

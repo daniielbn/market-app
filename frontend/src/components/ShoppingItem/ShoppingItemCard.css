@@ -133,6 +133,8 @@
 
     flex: 1;
 
+    min-width: 0;
+
     display: flex;
 
     flex-direction: column;
@@ -169,6 +171,8 @@
 
     margin: 0;
 
+    min-width: 0;
+
     font-size: 1.15rem;
 
     font-weight: 600;
@@ -176,6 +180,10 @@
     color: var(--text);
 
     line-height: 1.2;
+
+    overflow-wrap: break-word;
+
+    word-break: break-word;
 
 }
 

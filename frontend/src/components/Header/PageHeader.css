@@ -36,6 +36,10 @@
 
     color: white;
 
+    overflow-wrap: break-word;
+
+    word-break: break-word;
+
 }
 
 .page-header__subtitle {

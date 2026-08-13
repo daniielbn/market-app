@@ -1,0 +1,101 @@
+.app-navigation {
+
+    padding: .75rem 1rem;
+
+    border-bottom: 1px solid var(--border-light);
+
+    background: var(--surface);
+
+}
+
+.app-navigation__inner {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: .5rem;
+
+    max-width: 80rem;
+
+    margin: 0 auto;
+
+}
+
+.app-navigation__link {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 10rem;
+
+    padding: .65rem 1rem;
+
+    border-radius: 12px;
+
+    color: var(--text-secondary);
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+    transition:
+        background-color .15s ease,
+        color .15s ease;
+
+}
+
+.app-navigation__link:hover {
+
+    background: var(--surface-hover);
+
+    color: var(--text);
+
+}
+
+.app-navigation__link--active {
+
+    background: var(--primary);
+
+    color: white;
+
+}
+
+.app-navigation__link--active:hover {
+
+    background: var(--primary-hover);
+
+    color: white;
+
+}
+
+@media (max-width: 640px) {
+
+    .app-navigation {
+
+        padding: .6rem .75rem;
+
+    }
+
+    .app-navigation__inner {
+
+        gap: .35rem;
+
+    }
+
+    .app-navigation__link {
+
+        min-width: 0;
+
+        flex: 1;
+
+        padding: .6rem .75rem;
+
+        font-size: .85rem;
+
+    }
+
+}

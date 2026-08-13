@@ -1,18 +1,56 @@
 @import "tailwindcss";
 
-html, body, #root {
-	min-height: 100%;
+html,
+body,
+#root {
+
+    min-height: 100%;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+
 }
 
 html {
 
-	scroll-behavior: smooth;
+    scroll-behavior: smooth;
 
 }
 
 body {
-	margin: 0;
-	background: var(--background);
-	-webkit-text-size-adjust: 100%;
+
+    margin: 0;
+
+    background: var(--background);
+
+    -webkit-text-size-adjust: 100%;
+
 }
-  
+
+*,
+*::before,
+*::after {
+
+    box-sizing: border-box;
+
+}
+
+img {
+
+    display: block;
+
+    max-width: 100%;
+
+}
+
+button,
+input,
+textarea,
+select {
+
+    font: inherit;
+
+}

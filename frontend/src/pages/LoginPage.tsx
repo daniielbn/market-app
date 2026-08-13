@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { validateHouse } from "../services/houseService";
 import { saveHouse } from "../utils/localStorage";
 import { useHouse } from "../hooks/useHouse";
-import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/Header/PageHeader";
 
 import "./LoginPage.css";
@@ -20,7 +19,16 @@ export default function LoginPage() {
     useEffect(() => {
 
         if (isLogged) {
-            navigate("/house");
+
+            const houseId =
+                localStorage.getItem("houseId");
+
+            if (!houseId) {
+                return;
+            }
+
+            navigate(`/house/${houseId}`);
+
         }
 
     }, [isLogged, navigate]);
@@ -38,12 +46,13 @@ export default function LoginPage() {
             house.houseName
         );
 
-        navigate("/house");
+        navigate(`/house/${house.houseId}`);
 
     }
 
     return (
-        <MainLayout>
+
+        <div>
 
             <PageHeader
                 title="Market"
@@ -67,7 +76,9 @@ export default function LoginPage() {
                             id="accessCode"
                             type="text"
                             value={accessCode}
-                            onChange={(event) => setAccessCode(event.target.value)}
+                            onChange={(event) =>
+                                setAccessCode(event.target.value)
+                            }
                             placeholder="Escribe el código de tu casa"
                             className="login-page__input"
                         />
@@ -86,7 +97,8 @@ export default function LoginPage() {
 
             </main>
 
-        </MainLayout>
+        </div>
+
     );
 
 }

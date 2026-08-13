@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-import type { ProductResponse } from "../types/dto/ProductResponse";
-import type { CreateProductRequest } from "../types/dto/CreateProductRequest";
+import type { ProductResponse } from "../types/dto/response/ProductResponse";
+import type { CreateProductRequest } from "../types/dto/request/CreateProductRequest";
 
 export async function getProducts(
     houseId: string

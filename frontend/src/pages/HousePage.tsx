@@ -1,44 +1,71 @@
 import { useEffect, useState } from "react";
-import { getShoppingItems, updateShoppingItem, deleteShoppingItem, clearShoppingItems, createShoppingItem } from "../services/shoppingItemService";
-import type { ShoppingItemResponse } from "../types/dto/ShoppingItemResponse";
+import { useParams } from "react-router-dom";
+
+import {
+    getShoppingItems,
+    updateShoppingItem,
+    deleteShoppingItem,
+    clearShoppingItems,
+    createShoppingItem,
+} from "../services/shoppingItemService";
+
+import type { ShoppingItemResponse } from "../types/dto/response/ShoppingItemResponse";
+
 import ShoppingItemCard from "../components/ShoppingItem/ShoppingItemCard";
+
 import trashIcon from "../assets/icon/trash.svg";
+
 import MainLayout from "../layouts/MainLayout";
 import PageHeader from "../components/Header/PageHeader";
 import AddShoppingItemBar from "../components/AddShoppingItemBar/AddShoppingItemBar";
+
 import { useProducts } from "../hooks/useProducts";
 import { createProduct } from "../services/productService";
-import ProductAutocomplete from "../components/ProductAutocomplete";
-import type { Product } from "../types/Product";
-import Toast from "../components/Toast/Toast";
 import CreateProductModal from "../components/CreateProductModal/CreateProductModal";
 
-import "./HousePage.css";
+import ProductAutocomplete from "../components/ProductAutocomplete";
+
+import type { Product } from "../types/Product";
+
+import AddShoppingItemModal from "../components/AddShoppingItemModal/AddShoppingItemModal";
+
 
 function HousePage() {
 
-    const [shoppingItems, setShoppingItems] = useState<ShoppingItemResponse[]>([]);
+    const { houseId } =
+        useParams<{ houseId: string }>();
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [shoppingItems, setShoppingItems] =
+        useState<ShoppingItemResponse[]>([]);
 
-    const houseId = localStorage.getItem("houseId");
-    const houseName = localStorage.getItem("houseName");
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState<string | null>(null);
+
+    const houseName =
+        localStorage.getItem("houseName");
 
     const {
         products,
         setProducts,
-    } = useProducts(houseId);
+    } = useProducts(houseId ?? null);
 
-    const [searchText, setSearchText] = useState("");
+    const [searchText, setSearchText] =
+        useState("");
 
-    const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] =
+        useState<Product | null>(null);
 
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [isAddModalOpen, setIsAddModalOpen] =
+        useState(false);
 
-    const [toastType, setToastType] = useState<"success" | "error">("success");
+    const [isCreateProductModalOpen, setIsCreateProductModalOpen] =
+        useState(false);
 
-    const handleUpdateShoppingItem = async (
+
+    const handleUpdate = async (
         shoppingItemId: string,
         request: {
             quantity?: number;
@@ -49,10 +76,11 @@ function HousePage() {
 
         try {
 
-            const updatedItem = await updateShoppingItem(
-                shoppingItemId,
-                request
-            );
+            const updatedItem =
+                await updateShoppingItem(
+                    shoppingItemId,
+                    request
+                );
 
             setShoppingItems((currentItems) =>
                 currentItems.map((item) =>
@@ -74,40 +102,43 @@ function HousePage() {
             );
 
         }
+
     };
+
 
     const handleDelete = async (
         shoppingItemId: string
     ) => {
 
-        if (!houseId) {
-            return;
-        }
+        const itemToDelete =
+            shoppingItems.find(
+                (item) =>
+                    item.id === shoppingItemId
+            );
 
-        const itemToDelete = shoppingItems.find(
-            (item) => item.id === shoppingItemId
-        );
-
-        const confirmed = window.confirm(
-            itemToDelete
-                ? `¿Seguro que quieres eliminar ${itemToDelete.product.name} de la lista?`
-                : "¿Seguro que quieres eliminar este producto de la lista?"
-        );
+        const confirmed =
+            window.confirm(
+                itemToDelete
+                    ? `¿Seguro que quieres eliminar ${itemToDelete.product.name} de la lista?`
+                    : "¿Seguro que quieres eliminar este producto de la lista?"
+            );
 
         if (!confirmed) {
             return;
         }
 
+
         try {
 
             await deleteShoppingItem(
-                houseId,
+                houseId!,
                 shoppingItemId
             );
 
             setShoppingItems((currentItems) =>
                 currentItems.filter(
-                    (item) => item.id !== shoppingItemId
+                    (item) =>
+                        item.id !== shoppingItemId
                 )
             );
 
@@ -123,29 +154,31 @@ function HousePage() {
             );
 
         }
+
     };
 
-    const handleClearList = async () => {
 
-        if (!houseId) {
-            return;
-        }
+    const handleClearList = async () => {
 
         if (shoppingItems.length === 0) {
             return;
         }
 
-        const confirmed = window.confirm(
-            "¿Seguro que quieres eliminar todos los productos de la lista?"
-        );
+        const confirmed =
+            window.confirm(
+                "¿Seguro que quieres eliminar todos los productos de la lista?"
+            );
 
         if (!confirmed) {
             return;
         }
 
+
         try {
 
-            await clearShoppingItems(houseId);
+            await clearShoppingItems(
+                houseId!
+            );
 
             setShoppingItems([]);
 
@@ -161,50 +194,24 @@ function HousePage() {
             );
 
         }
-    };
-
-    const handleProductSelected = async (product: Product) => {
-
-        if (!houseId) {
-            return;
-        }
-
-        try {
-
-            const shoppingItem = await createShoppingItem(
-                houseId,
-                {
-                    productId: product.id,
-                    quantity: 1,
-                    comment: "",
-                }
-            );
-
-            setShoppingItems(current => [
-                shoppingItem,
-                ...current,
-            ]);
-
-            setSearchText("");
-
-        } catch (error) {
-
-            console.error(
-                "Error al añadir el producto a la lista:",
-                error
-            );
-
-            setError(
-                "No se ha podido añadir el producto a la lista."
-            );
-
-        }
 
     };
+
+
+    const handleProductSelected = (
+        product: Product
+    ) => {
+
+        setSelectedProduct(product);
+
+        setIsAddModalOpen(true);
+
+    };
+
 
     const handleCreateProduct = () => {
 
-        setIsCreateProductModalOpen(true);
+         setIsCreateProductModalOpen(true);
 
     };
 
@@ -213,74 +220,102 @@ function HousePage() {
         image: File
     ): Promise<void> => {
 
-        if (!houseId) {
+        try {
+
+            // Crear el producto
+            const product =
+                await createProduct(
+                    houseId!,
+                    {
+                        name,
+                        image,
+                    }
+                );
+
+            // Añadirlo automáticamente a la lista
+            const shoppingItem =
+                await createShoppingItem(
+                    houseId!,
+                    {
+                        productId: product.id,
+                        quantity: 1,
+                        comment: "",
+                    }
+                );
+
+            // Actualizar productos
+            setProducts((currentProducts) => [
+                ...currentProducts,
+                product,
+            ]);
+
+            // Actualizar lista de la compra
+            setShoppingItems((currentItems) => [
+                ...currentItems,
+                shoppingItem,
+            ]);
+
+            // Cerrar el modal de creación
+            setIsCreateProductModalOpen(false);
+
+            // Limpiar búsqueda
+            setSearchText("");
+
+        } catch (error) {
+
+            console.error(
+                "Error al crear el producto:",
+                error
+            );
+
+        }
+
+    };
+
+
+    const handleConfirmAddShoppingItem = async (
+        quantity: number,
+        comment: string
+    ): Promise<void> => {
+
+        if (!selectedProduct) {
             return;
         }
 
         try {
 
-            const product = await createProduct(
-                houseId,
-                {
-                    name,
-                    image,
-                }
-            );
+            const shoppingItem =
+                await createShoppingItem(
+                    houseId!,
+                    {
+                        productId:
+                            selectedProduct.id,
 
-            setProducts(current => [
-                product,
-                ...current,
-            ]);
+                        quantity,
 
-            const shoppingItem = await createShoppingItem(
-                houseId,
-                {
-                    productId: product.id,
-                    quantity: 1,
-                    comment: "",
-                }
-            );
+                        comment,
+                    }
+                );
 
             setShoppingItems(current => [
-                shoppingItem,
                 ...current,
+                shoppingItem,
             ]);
 
-            showToast(
-                "Producto creado correctamente",
-                "success"
-            );
+            setIsAddModalOpen(false);
 
-            setIsCreateProductModalOpen(false);
+            setSelectedProduct(null);
 
             setSearchText("");
 
-        }
-        catch (error: any) {
-
-            if (
-                error.response?.status === 409
-            ) {
-
-                showToast(
-                    "Ya existe un producto con ese nombre",
-                    "error"
-                );
-
-                return;
-
-            }
-
-            showToast(
-                "No se ha podido crear el producto",
-                "error"
-            );
+        } catch (error) {
 
             console.error(error);
 
         }
 
     };
+
 
     useEffect(() => {
 
@@ -289,253 +324,274 @@ function HousePage() {
             return;
         }
 
-        const loadShoppingItems = async () => {
+        const loadShoppingItems =
+            async () => {
 
-            try {
+                try {
 
-                setLoading(true);
-                setError(null);
+                    setLoading(true);
 
-                const items = await getShoppingItems(houseId);
+                    setError(null);
 
-                console.log("Shopping items recibidos:", items);
+                    const items =
+                        await getShoppingItems(
+                            houseId
+                        );
 
-                setShoppingItems(items);
+                    setShoppingItems(items);
 
-            } catch (error) {
+                } catch (error) {
 
-                console.error(
-                    "Error al obtener la lista de la compra:",
-                    error
-                );
+                    console.error(
+                        "Error al obtener la lista de la compra:",
+                        error
+                    );
 
-                setError(
-                    "No se ha podido cargar la lista de la compra."
-                );
+                    setError(
+                        "No se ha podido cargar la lista de la compra."
+                    );
 
-            } finally {
+                } finally {
 
-                setLoading(false);
+                    setLoading(false);
 
-            }
-        };
+                }
+
+            };
 
         loadShoppingItems();
 
     }, [houseId]);
 
-    function showToast(
-        message: string,
-        type: "success" | "error"
-    ) {
 
-        setToastMessage(message);
+    if (!houseId) {
 
-        setToastType(type);
-
-        setTimeout(() => {
-
-            setToastMessage(null);
-
-        }, 2500);
+        return (
+            <div>
+                <p>
+                    No se ha encontrado la casa.
+                </p>
+            </div>
+        );
 
     }
 
 
     if (loading) {
+
         return (
-            <MainLayout>
 
-                <main className="house-page">
+            <MainLayout
+                houseId={houseId}
+            >
 
-                    <section className="house-page__card">
+                <PageHeader
+                    title={houseName ?? ""}
+                    subtitle="Lista de la compra"
+                />
 
-                        <div className="house-page__empty-state">
-
-                            <p className="house-page__empty-title">
-                                Cargando lista de la compra...
-                            </p>
-
-                            <p className="house-page__empty-text">
-                                Estamos obteniendo los productos de la casa.
-                            </p>
-
-                        </div>
-
-                    </section>
-
-                </main>
+                <div>
+                    <p>
+                        Cargando lista de la compra...
+                    </p>
+                </div>
 
             </MainLayout>
+
         );
+
     }
 
 
     if (error) {
+
         return (
-            <div className="mx-auto max-w-3xl px-6 py-12">
-                <div className="rounded-2xl border border-[var(--border-light)] bg-white p-6 shadow-[var(--shadow)]">
-                    <p className="text-sm font-medium text-[var(--text-secondary)]">
-                        {houseName}
-                    </p>
 
-                    <h1 className="mt-1 text-xl font-semibold tracking-tight text-[var(--text)]">
-                        No se ha podido cargar la lista
-                    </h1>
+            <MainLayout
+                houseId={houseId}
+            >
 
-                    <p className="mt-2 text-[var(--text-secondary)]">
+                <PageHeader
+                    title={houseName ?? ""}
+                    subtitle="Lista de la compra"
+                />
+
+                <main>
+
+                    <p>
                         {error}
                     </p>
-                </div>
-            </div>
+
+                </main>
+
+            </MainLayout>
+
         );
+
     }
 
-    const sortedShoppingItems = [...shoppingItems].sort((a, b) => {
 
-        // Primero los no comprados
-        if (a.purchased !== b.purchased) {
+    const sortedShoppingItems =
+        [...shoppingItems].sort(
+            (a, b) => {
 
-            return Number(a.purchased) - Number(b.purchased);
+                // Primero los no comprados
 
-        }
+                if (
+                    a.purchased !==
+                    b.purchased
+                ) {
 
-        // Dentro de cada grupo, más recientes primero
-        return (
-            new Date(b.createdAt).getTime() -
-            new Date(a.createdAt).getTime()
+                    return (
+                        Number(a.purchased) -
+                        Number(b.purchased)
+                    );
+
+                }
+
+                // Dentro de cada grupo,
+                // más recientes primero
+
+                return (
+                    new Date(
+                        b.createdAt
+                    ).getTime() -
+                    new Date(
+                        a.createdAt
+                    ).getTime()
+                );
+
+            }
         );
 
-    });
 
     return (
 
-        <MainLayout>
+        <MainLayout
+            houseId={houseId}
+        >
 
             <PageHeader
                 title={houseName ?? ""}
+                subtitle="Lista de la compra"
             />
 
-            <main className="house-page">
+            <main
+                className="
+                    max-w-4xl
+                    mx-auto
+                    p-6
+                "
+            >
 
-                <section className="house-page__card">
+                <div>
+                    <AddShoppingItemBar
+                        value={searchText}
+                        onChange={setSearchText}
+                    />
 
-                    <div className="house-page__hero">
 
-                        <div className="house-page__heading">
+                    <ProductAutocomplete
+                        products={products}
+                        searchText={searchText}
+                        onSelect={handleProductSelected}
+                        onCreate={handleCreateProduct}
+                    />
 
-                            <h2 className="house-page__title">
-                                Lista de la compra
-                            </h2>
 
-                            <p className="house-page__description">
-                                Escribe un producto arriba para añadirlo al instante y edita cantidad o comentario desde cada tarjeta.
-                            </p>
+                    <button
+                        type="button"
+                        onClick={handleClearList}
+                        disabled={
+                            shoppingItems.length === 0
+                        }
+                        aria-label="Vaciar lista de la compra"
+                    >
 
-                            <div className="house-page__controls-row">
+                        <img
+                            src={trashIcon}
+                            alt="Vaciar lista"
+                            className="w-5 h-5"
+                        />
 
-                                <div className="house-page__search-stack">
+                    </button>
 
-                                    <AddShoppingItemBar
-                                        value={searchText}
-                                        onChange={setSearchText}
-                                    />
 
-                                    <ProductAutocomplete
-                                        products={products}
-                                        searchText={searchText}
-                                        onSelect={handleProductSelected}
-                                        onCreate={handleCreateProduct}
-                                    />
+                    {shoppingItems.length === 0 ? (
 
-                                </div>
+                        <p>
+                            La lista de la compra está vacía.
+                        </p>
 
-                                <button
-                                    type="button"
-                                    onClick={handleClearList}
-                                    disabled={shoppingItems.length === 0}
-                                    aria-label="Vaciar lista de la compra"
-                                    className="house-page__clear-button"
-                                >
-                                    <img
-                                        src={trashIcon}
-                                        alt=""
-                                        className="house-page__clear-icon"
-                                    />
-                                </button>
+                    ) : (
 
-                            </div>
+                        <div>
 
-                        </div>
+                            {sortedShoppingItems.map(
+                                (item) => (
 
-                    </div>
-
-                    <div className="house-page__content">
-
-                        {shoppingItems.length === 0 ? (
-
-                            <div className="house-page__empty-state">
-
-                                <p className="house-page__empty-title">
-                                    La lista está vacía
-                                </p>
-
-                                <p className="house-page__empty-text">
-                                    Escribe un producto arriba y selecciónalo para añadir 1 unidad automáticamente.
-                                </p>
-
-                            </div>
-
-                        ) : (
-
-                            <div className="house-page__list">
-
-                                {sortedShoppingItems.map((item) => (
                                     <ShoppingItemCard
                                         key={item.id}
                                         item={item}
-                                        onUpdate={handleUpdateShoppingItem}
+                                        onUpdate={handleUpdate}
                                         onDelete={handleDelete}
                                     />
-                                ))}
 
-                            </div>
+                                )
+                            )}
 
-                        )}
+                        </div>
 
-                    </div>
+                    )}
 
-                </section>
+                </div>
 
-            <CreateProductModal
+                <CreateProductModal
 
-                open={isCreateProductModalOpen}
+                    open={isCreateProductModalOpen}
 
-                initialName={searchText}
+                    initialName={searchText}
 
-                onClose={() => {
+                    onClose={() => {
 
-                    setIsCreateProductModalOpen(false);
+                        setIsCreateProductModalOpen(false);
 
-                }}
+                    }}
 
-                onConfirm={handleConfirmCreateProduct}
+                    onConfirm={
+                        handleConfirmCreateProduct
+                    }
 
-            />
-            </main>
-
-            {toastMessage && (
-
-                <Toast
-                    message={toastMessage}
-                    type={toastType}
                 />
 
-            )}
+
+                <AddShoppingItemModal
+
+                    open={isAddModalOpen}
+
+                    product={selectedProduct}
+
+                    onCancel={() => {
+
+                        setIsAddModalOpen(false);
+
+                        setSelectedProduct(null);
+
+                    }}
+
+                    onConfirm={
+                        handleConfirmAddShoppingItem
+                    }
+
+                />
+
+            </main>
 
         </MainLayout>
 
     );
+
 }
+
 
 export default HousePage;
